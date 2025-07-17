@@ -1,0 +1,1258 @@
+{
+  "Version": 1,
+  "Hash": "fWZL8oaRL/QwSPncUxyzvVXwbo18RGexGVN2fwhiLdk=",
+  "Source": "My_own_website",
+  "BasePath": "_content/My_own_website",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "My_own_website\\wwwroot",
+      "Source": "My_own_website",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\bundle\\My_own_website.styles.css",
+      "SourceId": "My_own_website",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\bundle\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "My_own_website#[.{fingerprint}]?.styles.css",
+      "AssetKind": "All",
+      "AssetMode": "CurrentProject",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "ScopedCss",
+      "AssetTraitValue": "ApplicationBundle",
+      "Fingerprint": "8lqvugq0pq",
+      "Integrity": "XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\bundle\\My_own_website.styles.css"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\My_own_website.bundle.scp.css",
+      "SourceId": "My_own_website",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "My_own_website#[.{fingerprint}]!.bundle.scp.css",
+      "AssetKind": "All",
+      "AssetMode": "Reference",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "ScopedCss",
+      "AssetTraitValue": "ProjectBundle",
+      "Fingerprint": "8lqvugq0pq",
+      "Integrity": "XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\My_own_website.bundle.scp.css"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\app.css",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "app#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "da95v2qkru",
+      "Integrity": "u9qEka1auR7E3rd3/8/j8hkQdSOYj9bRJ4nYiFDR1sE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\app.css"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "bootstrap/bootstrap.min#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "bpk8xqwxhs",
+      "Integrity": "z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "bootstrap/bootstrap.min.css#[.{fingerprint}]?.map",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "8inm30yfxf",
+      "Integrity": "gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\favicon.png",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "favicon#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "ifv42okdf2",
+      "Integrity": "4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\favicon.png"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\3DPrinter.gif",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "images/3DPrinter#[.{fingerprint}]?.gif",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "jtqp40zwq0",
+      "Integrity": "+fdFWNjM9pLgU7UlsILxEMcpGRh8KyWyCaag0PO9Ibk=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\3DPrinter.gif"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\bildbearbeitung.gif",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "images/bildbearbeitung#[.{fingerprint}]?.gif",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "0e0yckxryn",
+      "Integrity": "eGLwyu94PLV4ECP1/lqXNKpLDQW8KgkhI1XyqJadn60=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\bildbearbeitung.gif"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\davinci.gif",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "images/davinci#[.{fingerprint}]?.gif",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "wkvdzgoylb",
+      "Integrity": "4Ntr652bL06RN79d7IWARD4uYNY/j9RI+Fz2r7rE5+k=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\davinci.gif"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\maker-space.jpg",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "images/maker-space#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "i2vdum3jfd",
+      "Integrity": "isQjl7u/IIpavcDcmXQKVtFkQTR7+yyGNM4mH+6ByyU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\maker-space.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\podcast.jpg",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "images/podcast#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "1berk08q3o",
+      "Integrity": "0+p9KrIAvPnq6L2tHC+mmIkExT1C68qW+q3QPljj45A=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\podcast.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\VisualStudio.gif",
+      "SourceId": "My_own_website",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\",
+      "BasePath": "_content/My_own_website",
+      "RelativePath": "images/VisualStudio#[.{fingerprint}]?.gif",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "b6ohzczw4c",
+      "Integrity": "XYg31WEZSBnGVw1AA9o0zI8JnR7z/dhO0GO++kJXZq4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\VisualStudio.gif"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "app.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\app.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2591"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"u9qEka1auR7E3rd3/8/j8hkQdSOYj9bRJ4nYiFDR1sE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-u9qEka1auR7E3rd3/8/j8hkQdSOYj9bRJ4nYiFDR1sE="
+        }
+      ]
+    },
+    {
+      "Route": "app.da95v2qkru.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\app.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2591"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"u9qEka1auR7E3rd3/8/j8hkQdSOYj9bRJ4nYiFDR1sE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "da95v2qkru"
+        },
+        {
+          "Name": "label",
+          "Value": "app.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-u9qEka1auR7E3rd3/8/j8hkQdSOYj9bRJ4nYiFDR1sE="
+        }
+      ]
+    },
+    {
+      "Route": "bootstrap/bootstrap.min.bpk8xqwxhs.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "162720"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "bpk8xqwxhs"
+        },
+        {
+          "Name": "label",
+          "Value": "bootstrap/bootstrap.min.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg="
+        }
+      ]
+    },
+    {
+      "Route": "bootstrap/bootstrap.min.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "162720"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg="
+        }
+      ]
+    },
+    {
+      "Route": "bootstrap/bootstrap.min.css.8inm30yfxf.map",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "449111"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "8inm30yfxf"
+        },
+        {
+          "Name": "label",
+          "Value": "bootstrap/bootstrap.min.css.map"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ="
+        }
+      ]
+    },
+    {
+      "Route": "bootstrap/bootstrap.min.css.map",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "449111"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/plain"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ="
+        }
+      ]
+    },
+    {
+      "Route": "favicon.ifv42okdf2.png",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\favicon.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1148"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ifv42okdf2"
+        },
+        {
+          "Name": "label",
+          "Value": "favicon.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg="
+        }
+      ]
+    },
+    {
+      "Route": "favicon.png",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\favicon.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1148"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 05 Jul 2025 10:26:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg="
+        }
+      ]
+    },
+    {
+      "Route": "images/3DPrinter.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\3DPrinter.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5336326"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+fdFWNjM9pLgU7UlsILxEMcpGRh8KyWyCaag0PO9Ibk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:18:25 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-+fdFWNjM9pLgU7UlsILxEMcpGRh8KyWyCaag0PO9Ibk="
+        }
+      ]
+    },
+    {
+      "Route": "images/3DPrinter.jtqp40zwq0.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\3DPrinter.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5336326"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+fdFWNjM9pLgU7UlsILxEMcpGRh8KyWyCaag0PO9Ibk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:18:25 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "jtqp40zwq0"
+        },
+        {
+          "Name": "label",
+          "Value": "images/3DPrinter.gif"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-+fdFWNjM9pLgU7UlsILxEMcpGRh8KyWyCaag0PO9Ibk="
+        }
+      ]
+    },
+    {
+      "Route": "images/bildbearbeitung.0e0yckxryn.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\bildbearbeitung.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "344560"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"eGLwyu94PLV4ECP1/lqXNKpLDQW8KgkhI1XyqJadn60=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:19:02 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "0e0yckxryn"
+        },
+        {
+          "Name": "label",
+          "Value": "images/bildbearbeitung.gif"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-eGLwyu94PLV4ECP1/lqXNKpLDQW8KgkhI1XyqJadn60="
+        }
+      ]
+    },
+    {
+      "Route": "images/bildbearbeitung.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\bildbearbeitung.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "344560"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"eGLwyu94PLV4ECP1/lqXNKpLDQW8KgkhI1XyqJadn60=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:19:02 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-eGLwyu94PLV4ECP1/lqXNKpLDQW8KgkhI1XyqJadn60="
+        }
+      ]
+    },
+    {
+      "Route": "images/davinci.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\davinci.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12562902"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4Ntr652bL06RN79d7IWARD4uYNY/j9RI+Fz2r7rE5+k=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:21:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-4Ntr652bL06RN79d7IWARD4uYNY/j9RI+Fz2r7rE5+k="
+        }
+      ]
+    },
+    {
+      "Route": "images/davinci.wkvdzgoylb.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\davinci.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12562902"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4Ntr652bL06RN79d7IWARD4uYNY/j9RI+Fz2r7rE5+k=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:21:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "wkvdzgoylb"
+        },
+        {
+          "Name": "label",
+          "Value": "images/davinci.gif"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-4Ntr652bL06RN79d7IWARD4uYNY/j9RI+Fz2r7rE5+k="
+        }
+      ]
+    },
+    {
+      "Route": "images/maker-space.i2vdum3jfd.jpg",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\maker-space.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2278482"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"isQjl7u/IIpavcDcmXQKVtFkQTR7+yyGNM4mH+6ByyU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 10 Jul 2025 18:00:27 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "i2vdum3jfd"
+        },
+        {
+          "Name": "label",
+          "Value": "images/maker-space.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-isQjl7u/IIpavcDcmXQKVtFkQTR7+yyGNM4mH+6ByyU="
+        }
+      ]
+    },
+    {
+      "Route": "images/maker-space.jpg",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\maker-space.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2278482"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"isQjl7u/IIpavcDcmXQKVtFkQTR7+yyGNM4mH+6ByyU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 10 Jul 2025 18:00:27 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-isQjl7u/IIpavcDcmXQKVtFkQTR7+yyGNM4mH+6ByyU="
+        }
+      ]
+    },
+    {
+      "Route": "images/podcast.1berk08q3o.jpg",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\podcast.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "54716"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"0+p9KrIAvPnq6L2tHC+mmIkExT1C68qW+q3QPljj45A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:17:22 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "1berk08q3o"
+        },
+        {
+          "Name": "label",
+          "Value": "images/podcast.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-0+p9KrIAvPnq6L2tHC+mmIkExT1C68qW+q3QPljj45A="
+        }
+      ]
+    },
+    {
+      "Route": "images/podcast.jpg",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\podcast.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "54716"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"0+p9KrIAvPnq6L2tHC+mmIkExT1C68qW+q3QPljj45A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:17:22 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-0+p9KrIAvPnq6L2tHC+mmIkExT1C68qW+q3QPljj45A="
+        }
+      ]
+    },
+    {
+      "Route": "images/VisualStudio.b6ohzczw4c.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\VisualStudio.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "318186"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XYg31WEZSBnGVw1AA9o0zI8JnR7z/dhO0GO++kJXZq4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:15:06 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "b6ohzczw4c"
+        },
+        {
+          "Name": "label",
+          "Value": "images/VisualStudio.gif"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XYg31WEZSBnGVw1AA9o0zI8JnR7z/dhO0GO++kJXZq4="
+        }
+      ]
+    },
+    {
+      "Route": "images/VisualStudio.gif",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\VisualStudio.gif",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "318186"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/gif"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XYg31WEZSBnGVw1AA9o0zI8JnR7z/dhO0GO++kJXZq4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 16 Jul 2025 17:15:06 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XYg31WEZSBnGVw1AA9o0zI8JnR7z/dhO0GO++kJXZq4="
+        }
+      ]
+    },
+    {
+      "Route": "My_own_website.8lqvugq0pq.bundle.scp.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\My_own_website.bundle.scp.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5911"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 10 Jul 2025 18:18:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "8lqvugq0pq"
+        },
+        {
+          "Name": "label",
+          "Value": "My_own_website.bundle.scp.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q="
+        }
+      ]
+    },
+    {
+      "Route": "My_own_website.8lqvugq0pq.styles.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\bundle\\My_own_website.styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5911"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 10 Jul 2025 18:18:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "8lqvugq0pq"
+        },
+        {
+          "Name": "label",
+          "Value": "My_own_website.styles.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q="
+        }
+      ]
+    },
+    {
+      "Route": "My_own_website.bundle.scp.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\My_own_website.bundle.scp.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5911"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 10 Jul 2025 18:18:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q="
+        }
+      ]
+    },
+    {
+      "Route": "My_own_website.styles.css",
+      "AssetFile": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\bundle\\My_own_website.styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5911"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 10 Jul 2025 18:18:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XFbaUMzZphFcbhSnSfEhMqbvpkko49wRo2kBuvbXP4Q="
+        }
+      ]
+    }
+  ]
+}

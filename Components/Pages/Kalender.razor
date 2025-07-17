@@ -1,0 +1,330 @@
+﻿@page "/kalender"
+@rendermode InteractiveServer
+
+@using System.Globalization
+@inject NavigationManager Navigation
+
+<h1 class="text-primary fw-bold display-6 text-center mt-4 mb-4">
+    3-Wochen Kalender (Mo–Fr)
+</h1>
+
+<div class="container mb-5">
+
+    <!-- Legende -->
+    <div class="d-flex gap-4 mb-4 fw-semibold">
+        <div class="d-flex align-items-center gap-2">
+            <div class="legend-box free"></div> <span>Frei (Unterricht)</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <div class="legend-box pause"></div> <span>Frei (Pause)</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <div class="legend-box busy"></div> <span>Belegt</span>
+        </div>
+    </div>
+
+    <!-- Kalender -->
+    @for (int woche = 0; woche < 3; woche++)
+    {
+        <div class="calendar-week mb-4">
+            @foreach (var day in calendarDays.Skip(woche * 5).Take(5))
+            {
+                <div class="day-card">
+                    <h5>@day.Date.ToString("ddd dd.MM.")</h5>
+
+                    @foreach (var slot in day.TimeSlots)
+                    {
+                        <button class="btn btn-sm mt-2 w-100
+                            @(slot.IsFree
+                                ? (slot.Typ == "Pause" ? "btn-pause" : "btn-primary")
+                                : "btn-busy")"
+                                disabled="@(slot.IsFree == false)"
+                                @onclick="() => JetztBuchen(day.Date, slot.Start)">
+                            @slot.Start.ToString("HH:mm") - @slot.End.ToString("HH:mm")
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .calendar-week {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+    }
+
+    .day-card {
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .legend-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+
+    .free {
+        background-color: #e7f1ff;
+        border: 1px solid #0d6efd;
+    }
+
+    .pause {
+        background-color: #d1ecf1;
+        border: 1px solid #0c5460;
+    }
+
+    .busy {
+        background-color: #dee2e6;
+        border: 1px solid #6c757d;
+    }
+
+    .btn-pause {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #0c5460;
+    }
+
+    .btn-busy {
+        background-color: #dee2e6;
+        color: #495057;
+        border: 1px solid #6c757d;
+        cursor: not-allowed;
+    }
+
+    .day-card h5 {
+        margin-bottom: 0.8rem;
+        color: #0d6efd;
+        font-weight: 700;
+    }
+</style>
+
+@code {
+    private List<CalendarDay> calendarDays = new();
+    private string buchungenPfad = @"C:\Users\jonas\source\repos\My_own_website\My_own_website\Data\buchungen.txt";
+    private List<Buchung> buchungen = new();
+
+    protected override void OnInitialized()
+    {
+        buchungen = LadeBuchungen();
+
+        ErzeugeKalender();
+
+        PrüfeUndVerschiebeKalender(moDoSlots, freitagSlots);
+    }
+
+    // Slot-Definitionen müssen hier auf Klassenebene verfügbar sein, weil wir sie in PrüfeUndVerschiebeKalender brauchen
+    private readonly List<(int Stunde, int Minute, int DauerMin, string Typ)> moDoSlots = new()
+    {
+        (8, 0, 90, "Unterricht"),
+        (9, 30, 20, "Pause"),
+        (9, 50, 60, "Unterricht"),
+        (10, 50, 20, "Pause"),
+        (11, 10, 90, "Unterricht"),
+        (12, 40, 50, "Pause"),
+        (13, 30, 90, "Unterricht")
+    };
+
+    private readonly List<(int Stunde, int Minute, int DauerMin, string Typ)> freitagSlots = new()
+    {
+        (8, 0, 90, "Unterricht"),
+        (9, 30, 20, "Pause"),
+        (9, 50, 60, "Unterricht"),
+        (10, 50, 20, "Pause"),
+        (11, 10, 90, "Unterricht"),
+        (12, 40, 50, "Pause")
+    };
+
+    private void ErzeugeKalender()
+    {
+        calendarDays.Clear();
+
+        DateTime heute = DateTime.Today;
+        int diff = (7 + (heute.DayOfWeek - DayOfWeek.Monday)) % 7;
+        DateTime montag = heute.AddDays(-diff);
+
+        DateTime jetzt = DateTime.Now;
+
+        // 3 Wochen Mo-Fr = 15 Tage
+        for (int woche = 0; woche < 3; woche++)
+        {
+            for (int tag = 0; tag < 5; tag++)
+            {
+                DateTime aktuellerTag = montag.AddDays(woche * 7 + tag);
+                var day = new CalendarDay { Date = aktuellerTag, TimeSlots = new List<TimeSlot>() };
+
+                var slots = aktuellerTag.DayOfWeek == DayOfWeek.Friday ? freitagSlots : moDoSlots;
+
+                foreach (var slotInfo in slots)
+                {
+                    var start = new DateTime(aktuellerTag.Year, aktuellerTag.Month, aktuellerTag.Day, slotInfo.Stunde, slotInfo.Minute, 0);
+                    var end = start.AddMinutes(slotInfo.DauerMin);
+
+                    bool slotInVergangenheit = start <= jetzt;
+
+                    bool slotBelegt = buchungen.Any(b =>
+                        b.Datum.Date == aktuellerTag.Date &&
+                        b.Uhrzeit.Hours == slotInfo.Stunde &&
+                        b.Uhrzeit.Minutes == slotInfo.Minute);
+
+                    bool belegt = slotInVergangenheit || slotBelegt;
+
+                    day.TimeSlots.Add(new TimeSlot
+                        {
+                            Start = start,
+                            End = end,
+                            IsFree = !belegt,
+                            Typ = slotInfo.Typ
+                        });
+                }
+
+                calendarDays.Add(day);
+            }
+        }
+    }
+
+    private void PrüfeUndVerschiebeKalender(List<(int Stunde, int Minute, int DauerMin, string Typ)> moDoSlots, List<(int Stunde, int Minute, int DauerMin, string Typ)> freitagSlots)
+    {
+        DateTime jetzt = DateTime.Now;
+
+        while (calendarDays.Count >= 5)
+        {
+            // Nehme die ersten 5 Tage (1 Woche)
+            var ersteWoche = calendarDays.Take(5).ToList();
+
+            // Finde den letzten Termin in der Woche (spätester Endzeitpunkt aller Slots)
+            DateTime letzterTerminEnde = DateTime.MinValue;
+
+            foreach (var day in ersteWoche)
+            {
+                var slots = day.TimeSlots;
+                if (slots != null && slots.Count > 0)
+                {
+                    var maxEnd = slots.Max(s => s.End);
+                    if (maxEnd > letzterTerminEnde)
+                        letzterTerminEnde = maxEnd;
+                }
+            }
+
+            // Prüfen, ob der letzte Termin schon vorbei ist
+            if (letzterTerminEnde > jetzt)
+            {
+                // Die Woche ist noch nicht vorbei
+                break;
+            }
+
+            // Woche komplett vorbei -> rausnehmen
+            calendarDays.RemoveRange(0, 5);
+
+            // Neue Woche anhängen
+            DateTime letzterTag = calendarDays.Count > 0 ? calendarDays.Last().Date : DateTime.Today;
+
+            for (int tag = 1; tag <= 5; tag++)
+            {
+                DateTime neuerTag = letzterTag.AddDays(tag);
+                var day = new CalendarDay { Date = neuerTag, TimeSlots = new List<TimeSlot>() };
+
+                var slotsDefinition = neuerTag.DayOfWeek == DayOfWeek.Friday ? freitagSlots : moDoSlots;
+
+                foreach (var slotInfo in slotsDefinition)
+                {
+                    var start = new DateTime(neuerTag.Year, neuerTag.Month, neuerTag.Day, slotInfo.Stunde, slotInfo.Minute, 0);
+                    var end = start.AddMinutes(slotInfo.DauerMin);
+
+                    bool slotInVergangenheit = start <= jetzt;
+
+                    bool slotBelegt = buchungen.Any(b =>
+                        b.Datum.Date == neuerTag.Date &&
+                        b.Uhrzeit.Hours == slotInfo.Stunde &&
+                        b.Uhrzeit.Minutes == slotInfo.Minute);
+
+                    bool belegt = slotInVergangenheit || slotBelegt;
+
+                    day.TimeSlots.Add(new TimeSlot
+                        {
+                            Start = start,
+                            End = end,
+                            IsFree = !belegt,
+                            Typ = slotInfo.Typ
+                        });
+                }
+
+                calendarDays.Add(day);
+            }
+        }
+    }
+
+    private void JetztBuchen(DateTime date, DateTime start)
+    {
+        var datumString = date.ToString("yyyy-MM-dd");
+        var zeitString = start.ToString("HH:mm");
+        Navigation.NavigateTo($"/buchung/{datumString}/{zeitString}");
+    }
+
+    private List<Buchung> LadeBuchungen()
+    {
+        var liste = new List<Buchung>();
+
+        if (!File.Exists(buchungenPfad))
+            return liste;
+
+        var lines = File.ReadAllLines(buchungenPfad);
+
+        foreach (var line in lines)
+        {
+            var parts = line.Split(';');
+            if (parts.Length < 5)
+                continue;
+
+            if (!DateTime.TryParseExact(parts[0], "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var datum))
+                continue;
+
+            if (!TimeSpan.TryParseExact(parts[1], @"hh\:mm", CultureInfo.InvariantCulture, out var zeit))
+            {
+                if (!TimeSpan.TryParseExact(parts[1], @"HH\:mm", CultureInfo.InvariantCulture, out zeit))
+                    continue;
+            }
+
+            liste.Add(new Buchung
+                {
+                    Datum = datum,
+                    Uhrzeit = zeit,
+                    Klasse = parts[2],
+                    Schueler = parts[3],
+                    Klassencode = parts[4]
+                });
+        }
+
+        return liste;
+    }
+
+    public class CalendarDay
+    {
+        public DateTime Date { get; set; }
+        public List<TimeSlot> TimeSlots { get; set; } = new();
+    }
+
+    public class TimeSlot
+    {
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public bool IsFree { get; set; }
+        public string Typ { get; set; } = "Unterricht";
+    }
+
+    public class Buchung
+    {
+        public DateTime Datum { get; set; }
+        public TimeSpan Uhrzeit { get; set; }
+        public string Klasse { get; set; } = "";
+        public string Schueler { get; set; } = "";
+        public string Klassencode { get; set; } = "";
+    }
+}

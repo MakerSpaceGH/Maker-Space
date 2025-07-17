@@ -1,0 +1,69 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\My_own_website.bundle.scp.css",
+      "PackagePath": "staticwebassets\\My_own_website.8lqvugq0pq.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\3DPrinter.gif",
+      "PackagePath": "staticwebassets\\images\\3DPrinter.gif"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\VisualStudio.gif",
+      "PackagePath": "staticwebassets\\images\\VisualStudio.gif"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\bildbearbeitung.gif",
+      "PackagePath": "staticwebassets\\images\\bildbearbeitung.gif"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\davinci.gif",
+      "PackagePath": "staticwebassets\\images\\davinci.gif"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\maker-space.jpg",
+      "PackagePath": "staticwebassets\\images\\maker-space.jpg"
+    },
+    {
+      "Id": "C:\\Users\\jonas\\source\\repos\\My_own_website\\My_own_website\\wwwroot\\images\\podcast.jpg",
+      "PackagePath": "staticwebassets\\images\\podcast.jpg"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.My_own_website.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.My_own_website.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.build.My_own_website.props",
+      "PackagePath": "build\\My_own_website.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.My_own_website.props",
+      "PackagePath": "buildMultiTargeting\\My_own_website.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildTransitive.My_own_website.props",
+      "PackagePath": "buildTransitive\\My_own_website.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

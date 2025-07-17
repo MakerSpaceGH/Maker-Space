@@ -1,0 +1,139 @@
+﻿@using My_own_website.Services
+@inject NavigationManager Navigation
+@inject LoginManager LoginManager
+@inject IWebHostEnvironment Env
+@rendermode InteractiveServer
+
+<button class="login-btn" @onclick="ToggleDropdown" type="button" aria-expanded="@ShowDropdown" aria-haspopup="true">
+    <i class="bi bi-person-circle" style="font-size:1.2rem; margin-right: 6px; color: white;"></i>
+    Login
+    <span style="margin-left: 6px; font-size: 0.9rem;">@(ShowDropdown ? "▲" : "▼")</span>
+</button>
+
+@if (ShowDropdown)
+{
+    <div class="dropdown-panel" role="menu">
+        <h5 class="dropdown-title">Login</h5>
+
+        <input placeholder="Benutzername" @bind="Username" class="login-input" />
+        <input type="password" placeholder="Passwort" @bind="Password" class="login-input" />
+
+        <button @onclick="HandleLogin" class="login-submit">Anmelden</button>
+
+        @if (!string.IsNullOrEmpty(LoginMessage))
+        {
+            <p class="login-error">@LoginMessage</p>
+        }
+    </div>
+}
+
+<style>
+    .login-btn {
+        color: white;
+        font-weight: 700;
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(90deg, #6610f2 0%, #0a58ca 100%);
+        padding: 6px 12px;
+        border-radius: 20px;
+        box-shadow: 0 3px 8px rgba(102,16,242,0.7);
+        transition: background 0.3s ease;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+    }
+
+        .login-btn:hover {
+            background: linear-gradient(90deg, #0a58ca 0%, #6610f2 100%);
+            box-shadow: 0 5px 12px rgba(13,110,253,0.85);
+            color: white;
+        }
+
+    .dropdown-panel {
+        position: absolute;
+        top: 70px;
+        right: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        padding: 1.5rem;
+        width: 280px;
+        z-index: 1000;
+    }
+
+    .dropdown-title {
+        color: #6610f2;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .login-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .login-submit {
+        width: 100%;
+        padding: 10px;
+        background: #0d6efd;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+        .login-submit:hover {
+            background: #084bcc;
+        }
+
+    .login-error {
+        color: red;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+</style>
+
+@code {
+    private bool ShowDropdown = false;
+    private string Username = "";
+    private string Password = "";
+    private string LoginMessage = "";
+
+    private void ToggleDropdown()
+    {
+        ShowDropdown = !ShowDropdown;
+        LoginMessage = "";
+    }
+
+    private void HandleLogin()
+    {
+        try
+        {
+            bool loginErfolgreich = LoginManager.Login(Username, Password);
+
+            if (loginErfolgreich)
+            {
+                ShowDropdown = false;
+                Navigation.NavigateTo("/Logged In");
+            }
+            else
+            {
+                LoginMessage = "Falsche Zugangsdaten!";
+            }
+        }
+        catch (Exception ex)
+        {
+            LoginMessage = $"Fehler: {ex.Message}";
+        }
+    }
+}
