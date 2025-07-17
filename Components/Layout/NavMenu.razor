@@ -1,0 +1,103 @@
+﻿<div class="nav-scrollable">
+    <nav class="nav-menu">
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                <i class="bi bi-house-door-fill nav-icon"></i>
+                <span class="nav-text">Home</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="buchung">
+                <i class="bi bi-plus-square-fill nav-icon"></i>
+                <span class="nav-text">Buchen</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="kalender">
+                <i class="bi bi-calendar-event nav-icon"></i>
+                <span class="nav-text">Kalender</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="Workshops">
+                <i class="bi bi-people-fill nav-icon"></i>
+                <span class="nav-text">Workshops</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="Über Uns">
+                <i class="bi bi-info-circle-fill nav-icon"></i>
+                <span class="nav-text">Über Uns</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="Nutzungsregeln">
+                <i class="bi bi-journal-text nav-icon"></i>
+                <span class="nav-text">Nutzungsregeln</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item">
+            <NavLink class="nav-link" href="Kontakte">
+                <i class="bi bi-telephone-fill nav-icon"></i>
+                <span class="nav-text">Kontakte</span>
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+<style>
+    .nav-scrollable {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem 0;
+    }
+
+    .nav-item {
+        padding: 0.2rem 1rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 0.6rem 0.9rem;
+        transition: background-color 0.2s ease;
+        line-height: 1.2;
+    }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+    .nav-icon {
+        font-size: 1.4rem;
+        margin-right: 0.75rem;
+        vertical-align: middle;
+        line-height: 1;
+        display: inline-block;
+    }
+
+    .nav-text {
+        display: inline-block;
+        vertical-align: middle;
+    }
+</style>
