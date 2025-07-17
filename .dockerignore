@@ -1,8 +1,8 @@
-# Verzeichnisse für Build-Artefakte
+# Alle Build-Artefakte und temporäre Dateien ignorieren
 bin/
 obj/
 
-# IDE / Editor
+# IDE und Editor Dateien
 .vscode/
 .idea/
 *.user
@@ -13,14 +13,23 @@ obj/
 .git/
 .gitignore
 
-# Logs und temporäre Dateien
+# Logs
 *.log
-*.tmp
-*.temp
 
-# Docker Compose oder andere lokale Konfigurationsdateien
+# Docker Compose oder lokale Konfiguration
 docker-compose.yml
 
 # Dokumentation
 README.md
 *.md
+
+# Doppelte oder temporäre .NET Dateien, die Probleme machen können
+*.deps.json
+*.runtimeconfig.json
+*.dll
+*.pdb
+
+# Sonstige temporäre Dateien
+*.tmp
+*.temp
+*.swp
