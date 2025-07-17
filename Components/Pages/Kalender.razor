@@ -108,7 +108,7 @@
 
 @code {
     private List<CalendarDay> calendarDays = new();
-    private string buchungenPfad = string path = Path.Combine("Data", "buchungen.txt");
+    private string buchungenPfad = Path.Combine("Data", "buchungen.txt");
     private List<Buchung> buchungen = new();
 
     protected override void OnInitialized()
