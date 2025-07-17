@@ -18,10 +18,6 @@ obj/
 *.tmp
 *.temp
 
-# Docker-spezifische Dateien
-Dockerfile
-docker-compose.yml
-
 # Dokumentationsdateien (optional)
 README.md
 *.md
