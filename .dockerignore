@@ -1,26 +1,26 @@
-# Kompilierte Binär- und Objektordner
+# Verzeichnisse für Build-Artefakte
 bin/
 obj/
 
-# Visual Studio und Editor-Dateien
+# IDE / Editor
 .vscode/
 .idea/
 *.user
 *.suo
 *.vs/
 
-# Git-Repository und zugehörige Dateien
+# Git Dateien
 .git/
 .gitignore
 
-# Log- und temporäre Dateien
+# Logs und temporäre Dateien
 *.log
 *.tmp
 *.temp
 
-# Dokumentationsdateien (optional)
+# Docker Compose oder andere lokale Konfigurationsdateien
+docker-compose.yml
+
+# Dokumentation
 README.md
 *.md
-
-# Testordner (optional)
-TestResults/
