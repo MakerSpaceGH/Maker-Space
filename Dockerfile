@@ -3,6 +3,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 
+# Setze Umgebungsvariable, dass ASP.NET Core auf Port 80 hört
+ENV ASPNETCORE_URLS=http://+:80
+
 # SDK Image zum Bauen
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
