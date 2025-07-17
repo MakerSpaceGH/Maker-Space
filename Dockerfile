@@ -1,23 +1,25 @@
-# ---- Build Stage ----
+# ---- Build-Phase ----
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Nur die Projektdatei kopieren und Abhängigkeiten wiederherstellen
+# Nur Projektdateien und NuGet-Konfig kopieren
 COPY *.csproj ./
+COPY NuGet.config ./
+
+# Restore der NuGet-Pakete (schnellerer Build-Caching)
 RUN dotnet restore
 
-# Restlichen Code kopieren
-COPY . ./
+# Restlichen Code kopieren (nicht doppelt)
+COPY . .
 
-# Projekt veröffentlichen in den Ordner /app/publish
+# Projekt publizieren in /app/publish (cleaner Output)
 RUN dotnet publish "My_own_website.csproj" -c Release -o /app/publish
 
-# ---- Runtime Stage ----
+# ---- Runtime-Phase ----
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Veröffentlichten Output aus dem Build-Stadium kopieren
-COPY --from=build /app/publish ./
+# Nur die gepublishten Dateien aus dem Build-Container kopieren
+COPY --from=build /app/publish .
 
-# Container startet deine Anwendung
 ENTRYPOINT ["dotnet", "My_own_website.dll"]
