@@ -4,7 +4,7 @@ WORKDIR /src
 
 # Nur Projektdateien und NuGet-Konfig kopieren
 COPY *.csproj ./
-COPY NuGet.config ./
+
 
 # Restore der NuGet-Pakete (schnellerer Build-Caching)
 RUN dotnet restore
