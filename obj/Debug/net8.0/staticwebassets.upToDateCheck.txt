@@ -1,0 +1,10 @@
+wwwroot\app.css
+wwwroot\bootstrap\bootstrap.min.css
+wwwroot\bootstrap\bootstrap.min.css.map
+wwwroot\favicon.png
+wwwroot\images\3DPrinter.gif
+wwwroot\images\bildbearbeitung.gif
+wwwroot\images\davinci.gif
+wwwroot\images\maker-space.jpg
+wwwroot\images\podcast.jpg
+wwwroot\images\VisualStudio.gif

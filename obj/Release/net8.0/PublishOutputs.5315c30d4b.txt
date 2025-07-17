@@ -1,0 +1,7 @@
+C:\Users\jonas\source\repos\My_own_website\My_own_website\obj\Release\net8.0\PubTmp\Out\My_own_website.exe
+C:\Users\jonas\source\repos\My_own_website\My_own_website\obj\Release\net8.0\PubTmp\Out\appsettings.Development.json
+C:\Users\jonas\source\repos\My_own_website\My_own_website\obj\Release\net8.0\PubTmp\Out\appsettings.json
+C:\Users\jonas\source\repos\My_own_website\My_own_website\obj\Release\net8.0\PubTmp\Out\My_own_website.dll
+C:\Users\jonas\source\repos\My_own_website\My_own_website\obj\Release\net8.0\PubTmp\Out\My_own_website.deps.json
+C:\Users\jonas\source\repos\My_own_website\My_own_website\obj\Release\net8.0\PubTmp\Out\My_own_website.runtimeconfig.json
+C:\Users\jonas\source\repos\My_own_website\My_own_website\obj\Release\net8.0\PubTmp\Out\My_own_website.pdb
