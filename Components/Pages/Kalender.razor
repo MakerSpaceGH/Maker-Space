@@ -30,7 +30,7 @@
             @foreach (var day in calendarDays.Skip(woche * 5).Take(5))
             {
                 <div class="day-card">
-                    <h5>@day.Date.ToString("ddd dd.MM.")</h5>
+                    <h5>@day.Date.ToString("ddd dd.MM.", deutsch)</h5>
 
                     @foreach (var slot in day.TimeSlots)
                     {
@@ -107,8 +107,10 @@
 </style>
 
 @code {
+    private readonly CultureInfo deutsch = new CultureInfo("de-DE");
+
     private List<CalendarDay> calendarDays = new();
-    private string buchungenPfad = Path.Combine("Data", "buchungen.txt");
+    private string buchungenPfad = @"C:\Users\jonas\source\repos\My_own_website\My_own_website\Data\buchungen.txt";
     private List<Buchung> buchungen = new();
 
     protected override void OnInitialized()

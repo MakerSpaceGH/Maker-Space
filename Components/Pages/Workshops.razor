@@ -1,5 +1,6 @@
 ﻿@page "/Workshops"
 @inject IWebHostEnvironment Env
+@inject BackupService BackupService
 @rendermode InteractiveServer
 
 <h3 class="text-4xl font-extrabold text-blue-700 mb-10 text-center" style="margin-top: 0;">Workshops</h3>
@@ -18,7 +19,6 @@
         }
     </div>
 
- 
     <!-- Buchungsformular -->
     <div class="booking-form">
         <h4>Workshop buchen</h4>
@@ -82,7 +82,7 @@
         new WorkshopModel {
             Title = "VisualStudio",
             Description = "Entwickle dein erstes eigenes Projekt in C# mit Visual Studio und .NET.",
-            Image = "images/VisualStudio.gif"
+            Image = "images/visualstudio.gif"
         },
         new WorkshopModel {
             Title = "Podcast",
@@ -92,7 +92,7 @@
         new WorkshopModel {
             Title = "3DPrinter",
             Description = "Lerne, wie du 3D-Modelle erstellst und mit dem 3D-Drucker zum Leben erweckst.",
-            Image = "images/3DPrinter.gif"
+            Image = "images/3dprinter.gif"
         },
         new WorkshopModel {
             Title = "Bildbearbeitung",
@@ -246,6 +246,9 @@
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
             await File.AppendAllTextAsync(filePath, bookingLine + Environment.NewLine);
+
+            // Backup via GitHub hochladen
+            await BackupService.BackupFileAsync(filePath, "Data/workshops.txt");
 
             SuccessMessage = "Workshop erfolgreich gebucht!";
 

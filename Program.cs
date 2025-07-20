@@ -8,6 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Konfiguration aus appsettings.json laden
+builder.Services.Configure<GitHubSettings>(builder.Configuration.GetSection("GitHub"));
+
+// BackupService als Singleton oder Scoped registrieren
+builder.Services.AddScoped<BackupService>();
+
 builder.Services.AddSingleton<LoginManager>(sp =>
 {
     var env = sp.GetRequiredService<IWebHostEnvironment>();

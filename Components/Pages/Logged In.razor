@@ -3,6 +3,7 @@
 @inject LoginManager LoginManager
 @inject NavigationManager Navigation
 @inject IWebHostEnvironment Env
+@inject BackupService BackupService
 @rendermode InteractiveServer
 
 <h3 style="color:#1E3A8A; margin-bottom: 0.5rem;">Buchungen Übersicht</h3>
@@ -57,7 +58,16 @@ else
                 {
                     <tr>
                         <td>@b.Datum</td>
-                        <td>@b.Uhrzeit</td>
+                        <td>
+                            @if (TimeSpan.TryParse(b.Uhrzeit, out var parsedTime))
+                            {
+                                <span>@parsedTime.ToString(@"hh\:mm") Uhr</span>
+                            }
+                            else
+                            {
+                                <span style="color:red;">Ungültig</span>
+                            }
+                        </td>
                         <td>@b.Klasse</td>
                         <td>@b.Schueler</td>
                         <td>@b.Code</td>
@@ -74,8 +84,8 @@ else
                         <td>
                             @if (b.Status != "accept")
                             {
-                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAccept(b)">Kommen</button>
-                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBuchung(b)">Nicht gekommen</button>
+                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBuchungAsync(b)">Nicht gekommen</button>
                             }
                             else
                             {
@@ -209,11 +219,20 @@ else
                 var parts = line.Split(';');
                 if (parts.Length < 5) continue;
 
+                string uhrzeit = parts[1].Trim();
+
+                // Uhrzeit prüfen
+                if (!TimeSpan.TryParse(uhrzeit, out var _))
+                {
+                    uhrzeit = "Ungültig";
+                }
+
                 string status = parts.Length > 5 && parts[5].Trim().ToLower() == "accept" ? "accept" : "";
+
                 buchungen.Add(new Buchung
                     {
                         Datum = parts[0].Trim(),
-                        Uhrzeit = parts[1].Trim(),
+                        Uhrzeit = uhrzeit,
                         Klasse = parts[2].Trim(),
                         Schueler = parts[3].Trim(),
                         Code = parts[4].Trim(),
@@ -234,17 +253,19 @@ else
         File.WriteAllLines(RaumPath, lines);
     }
 
-    void MarkAccept(Buchung b)
+    async Task MarkAcceptAsync(Buchung b)
     {
         b.Status = "accept";
         SaveBuchungen();
+        await BackupService.BackupFileAsync(RaumPath, "Data/buchungen.txt");
         StateHasChanged();
     }
 
-    void DeleteBuchung(Buchung b)
+    async Task DeleteBuchungAsync(Buchung b)
     {
         buchungen.Remove(b);
         SaveBuchungen();
+        await BackupService.BackupFileAsync(RaumPath, "Data/buchungen.txt");
         StateHasChanged();
     }
 
