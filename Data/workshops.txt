@@ -1,3 +1,1 @@
-W:2025-07-16 20:44 - Jonas (9c) → Davinci | Termin: 30.07.2025
-W:2025-07-20 15:14 - Jonas Gohr (9c) → VisualStudio | Termin: 05.08.2025
-W:2025-09-12 16:55 - Jonas (9c) → 3DPrinter | Termin: 25.07.2025
+W:2025-09-12 17:11 - Jonas Gohr (9c) → Podcast | Termin: 10.08.2025
