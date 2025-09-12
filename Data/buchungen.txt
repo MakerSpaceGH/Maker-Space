@@ -1,11 +1,1 @@
-17.07.2025;08:00;9c;Jonas, ,;Code123;accept
-22.07.2025;08:00;9c;Jonas Gohr, ,;Code123;accept
-22.07.2025;09:30;9c;Leon , ,;Code123;accept
-23.07.2025;08:00;9c;ohr, , ;Code123
-24.07.2025;08:00;9c;Jonas Gohr, , ;Code123
-21.07.2025;08:00;9c;ghr, , ;Code123
-22.07.2025;13:30;9c;samuie, , ;Code123
-2025-09-15;08:00;9c;Jonas Gohr, , ;Code123
-2025-09-15;09:30;9c;Max Mustermann, , ;Code123
-2025-09-16;09:30;9c;Jonas Gohr, , ;Code123
 2025-09-15;08:00;9c;Jonas Gohr, , ;Code123
