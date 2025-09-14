@@ -1,22 +1,41 @@
-﻿namespace My_own_website.Services
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+
+namespace My_own_website.Services
 {
     public class LoginManager
     {
         private readonly string _contentRootPath;
 
-        public bool IsLoggedIn { get; private set; } = false;
+        // Session-spezifisch: aktueller Benutzer dieser Instanz
         public string CurrentUsername { get; private set; } = "";
+
+        // Global: alle aktuell eingeloggten Benutzer über alle Sessions
+        private static HashSet<string> LoggedInUsers = new();
 
         public LoginManager(string contentRootPath)
         {
             _contentRootPath = contentRootPath;
         }
 
-        public bool Login(string username, string password)
+        /// <summary>
+        /// Versucht, einen Benutzer einzuloggen.
+        /// </summary>
+        /// <param name="username">Benutzername</param>
+        /// <param name="password">Passwort</param>
+        /// <param name="error">Fehlermeldung falls Login fehlschlägt</param>
+        /// <returns>true, wenn Login erfolgreich, sonst false</returns>
+        public bool Login(string username, string password, out string error)
         {
+            error = "";
+
             var accountsFile = Path.Combine(_contentRootPath, "Data", "accounts");
             if (!File.Exists(accountsFile))
+            {
+                error = "Accounts-Datei nicht gefunden.";
                 return false;
+            }
 
             var lines = File.ReadAllLines(accountsFile);
             foreach (var line in lines)
@@ -26,19 +45,40 @@
                 {
                     if (parts[0].Trim() == username && parts[1].Trim() == password)
                     {
-                        IsLoggedIn = true;
+                        // Prüfen, ob Benutzer schon eingeloggt ist
+                        if (LoggedInUsers.Contains(username))
+                        {
+                            error = "Dieser Benutzer ist bereits eingeloggt.";
+                            return false;
+                        }
+
                         CurrentUsername = username;
+                        LoggedInUsers.Add(username);
                         return true;
                     }
                 }
             }
+
+            error = "Benutzername oder Passwort falsch.";
             return false;
         }
 
+        /// <summary>
+        /// Loggt den aktuellen Benutzer aus.
+        /// </summary>
         public void Logout()
         {
-            IsLoggedIn = false;
+            if (!string.IsNullOrEmpty(CurrentUsername))
+            {
+                LoggedInUsers.Remove(CurrentUsername);
+            }
+
             CurrentUsername = "";
         }
+
+        /// <summary>
+        /// Gibt zurück, ob dieser LoginManager aktuell einen Benutzer eingeloggt hat.
+        /// </summary>
+        public bool IsLoggedIn => !string.IsNullOrEmpty(CurrentUsername);
     }
 }

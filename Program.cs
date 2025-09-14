@@ -8,10 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Konfiguration aus appsettings.json laden
-builder.Services.Configure<GitHubSettings>(builder.Configuration.GetSection("GitHub"));
+builder.Services.AddSingleton<GitHubUploader>();
 
-// BackupService als Singleton oder Scoped registrieren
 builder.Services.AddScoped<BackupService>();
 
 builder.Services.AddSingleton<LoginManager>(sp =>
@@ -57,12 +55,11 @@ var workshopStatusPath = Path.Combine(dataPath, "workshopstatus.txt");
 if (!File.Exists(workshopStatusPath))
 {
     var defaultStatus =
-     "Davinci=true;2025-07-30\n" +
-     "VisualStudio=true;2025-08-05\n" +
-     "Podcast=true;2025-08-10\n" +
-     "3DPrinter=true;2025-07-25\n" +
-     "Bildbearbeitung=true;2025-08-15";
-
+      "Davinci=true;2025-07-30 14:00\n" +
+      "VisualStudio=true;2025-08-05 09:30\n" +
+      "Podcast=true;2025-08-10 13:00\n" +
+      "3DPrinter=true;2025-07-25 10:00\n" +
+      "Bildbearbeitung=true;2025-08-15 15:00";
     File.WriteAllText(workshopStatusPath, defaultStatus);
 }
 
@@ -70,6 +67,7 @@ var accountsPath = Path.Combine(dataPath, "accounts");
 if (!File.Exists(accountsPath))
 {
     File.WriteAllText(accountsPath, "Admin=admin\n");
+    File.WriteAllText(accountsPath, "Jonas=admin\n");
 }
 
 if (!app.Environment.IsDevelopment())
