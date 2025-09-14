@@ -1,3 +1,0 @@
-John;9c;Podcast;10.08.2025 13:00;accept;Admin
-Klaas;9c;Podcast;10.08.2025 13:00;accept;Admin
-Leonie;9c;Podcast;10.08.2025 13:00;accept;Admin

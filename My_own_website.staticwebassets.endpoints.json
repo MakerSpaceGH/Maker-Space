@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "ManifestType": "Publish",
+  "ManifestType": "Build",
   "Endpoints": [
     {
       "Route": "My_own_website.8lqvugq0pq.styles.css",
@@ -29,7 +29,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 10 Jul 2025 18:18:58 GMT"
+          "Value": "Thu, 10 Jul 2025 18:08:23 GMT"
         }
       ],
       "EndpointProperties": [
@@ -74,7 +74,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 10 Jul 2025 18:18:58 GMT"
+          "Value": "Thu, 10 Jul 2025 18:08:23 GMT"
         }
       ],
       "EndpointProperties": [
