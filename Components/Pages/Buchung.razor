@@ -3,6 +3,7 @@
 @inject IWebHostEnvironment Env
 @inject GitHubUploader GitHubUploader
 @rendermode InteractiveServer
+using System.Globalization;
 
 
 <h3 style="color: #0d6efd;">Buchung Maker Space</h3>
@@ -176,7 +177,7 @@
             meldung = "Einige Schülernamen sind doppelt. Bitte unterschiedliche Namen eintragen.";
             return;
         }
-        using System.Globalization;
+      
 
         if (!DateTime.TryParse(Datum, CultureInfo.GetCultureInfo("de-DE"), DateTimeStyles.None, out var parsedDatum))
         {
@@ -281,6 +282,7 @@
         }
     }
 }
+
 
 
 
