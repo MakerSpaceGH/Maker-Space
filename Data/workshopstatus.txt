@@ -1,5 +1,0 @@
-Davinci=true;2025-07-30
-VisualStudio=true;2025-08-05
-Podcast=true;2025-08-10
-3DPrinter=true;2025-07-25
-Bildbearbeitung=true;2025-08-15
