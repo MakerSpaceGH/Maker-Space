@@ -1,0 +1,280 @@
+﻿@page "/buchung"
+@page "/buchung/{DatumParam}/{Uhrzeit}"
+@inject IWebHostEnvironment Env
+@inject GitHubUploader GitHubUploader
+@rendermode InteractiveServer
+
+<h3 style="color: #0d6efd;">Buchung Maker Space</h3>
+
+<div class="form-group">
+    <label>Datum (TT.MM.JJJJ):</label>
+    <input type="text" class="form-control"
+           @bind="Datum"
+           @bind:event="onchange"
+           placeholder="z.B. 12.07.2025" />
+</div>
+
+<div class="form-group">
+    <label>Uhrzeit (HH:MM):</label>
+    <input type="text" class="form-control" @bind="Uhrzeit" placeholder="z.B. 08:00" />
+</div>
+
+<div class="form-group">
+    <label>Klasse:</label>
+    <input type="text" class="form-control" @bind="Klasse" placeholder="z.B. 9c" />
+</div>
+
+<div class="form-group">
+    <label>Schüler 1 (Vor- und Nachname):</label>
+    <input type="text" class="form-control" @bind="Schueler1" placeholder="z.B. Max Mustermann" />
+</div>
+
+<div class="form-group">
+    <label>Schüler 2 (optional):</label>
+    <input type="text" class="form-control" @bind="Schueler2" placeholder="z.B. Leon Schmidt" />
+</div>
+
+<div class="form-group">
+    <label>Schüler 3 (optional):</label>
+    <input type="text" class="form-control" @bind="Schueler3" placeholder="z.B. Timo Meyer" />
+</div>
+
+<div class="form-group">
+    <label>Klassencode:</label>
+    <input type="text" class="form-control" @bind="Klassencode" placeholder="z.B. Code123" />
+</div>
+
+<button class="btn btn-primary mt-3" @onclick="BuchungAbschicken">Buchen</button>
+
+@if (!string.IsNullOrEmpty(meldung))
+{
+    <div class="alert alert-info mt-3">@meldung</div>
+}
+
+<style>
+    .form-control {
+        border: 2px solid #3b82f6;
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #1e40af;
+        transition: border-color 0.25s ease;
+        box-sizing: border-box;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+        }
+</style>
+
+@code {
+    [Parameter]
+    public string DatumParam { get; set; } = "";
+
+    [Parameter]
+    public string Uhrzeit { get; set; } = "";
+
+    private string datum = "";
+    public string Datum
+    {
+        get => datum;
+        set
+        {
+            datum = value;
+            DatumFormatieren();
+        }
+    }
+
+    private string Klasse = "";
+    private string Schueler1 = "";
+    private string Schueler2 = "";
+    private string Schueler3 = "";
+    private string Klassencode = "";
+
+    private string meldung = "";
+
+    private Dictionary<string, string> klasseCodes = new();
+
+    private string BuchungenPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
+    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassenCodes.txt");
+
+    protected override void OnInitialized()
+    {
+        LadeKlasseCodes();
+    }
+
+    protected override void OnParametersSet()
+    {
+        // Nur übernehmen, wenn Datum bzw. Uhrzeit noch leer sind
+        if (string.IsNullOrWhiteSpace(Datum) && !string.IsNullOrWhiteSpace(DatumParam))
+            Datum = DatumParam;
+
+        if (string.IsNullOrWhiteSpace(Uhrzeit) && !string.IsNullOrWhiteSpace(Uhrzeit))
+            this.Uhrzeit = Uhrzeit;
+    }
+
+
+    private void LadeKlasseCodes()
+    {
+        klasseCodes.Clear();
+        try
+        {
+            if (!File.Exists(KlasseCodesPath))
+            {
+                meldung = "Es gab ein Problem beim Laden der Klassen-Codes.";
+                return;
+            }
+
+            foreach (var line in File.ReadAllLines(KlasseCodesPath))
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                var parts = line.Split('=', 2);
+                if (parts.Length == 2)
+                    klasseCodes[parts[0].Trim().ToLower()] = parts[1].Trim();
+            }
+        }
+        catch
+        {
+            meldung = "Es gab ein Problem beim Laden der Klassen-Codes.";
+        }
+    }
+
+    private void DatumFormatieren()
+    {
+        if (DateTime.TryParse(datum, out var parsedDatum))
+        {
+            datum = parsedDatum.ToString("dddd, dd. MMMM yyyy", new System.Globalization.CultureInfo("de-DE"));
+        }
+    }
+
+    private async Task BuchungAbschicken()
+    {
+        meldung = "";
+
+        // Pflichtfelder prüfen
+        var fehlendeFelder = new List<string>();
+        if (string.IsNullOrWhiteSpace(Datum)) fehlendeFelder.Add("Datum");
+        if (string.IsNullOrWhiteSpace(Uhrzeit)) fehlendeFelder.Add("Uhrzeit");
+        if (string.IsNullOrWhiteSpace(Klasse)) fehlendeFelder.Add("Klasse");
+        if (string.IsNullOrWhiteSpace(Klassencode)) fehlendeFelder.Add("Klassencode");
+        if (string.IsNullOrWhiteSpace(Schueler1)) fehlendeFelder.Add("Schüler 1");
+
+        if (fehlendeFelder.Any())
+        {
+            meldung = "Bitte folgende Pflichtfelder ausfüllen: " + string.Join(", ", fehlendeFelder);
+            return;
+        }
+
+        // Prüfung auf gleiche Namen bei Schüler 1-3
+        var schuelerListe = new[] { Schueler1, Schueler2, Schueler3 }.Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+        if (schuelerListe.Length != schuelerListe.Distinct().Count())
+        {
+            meldung = "Einige Schülernamen sind doppelt. Bitte unterschiedliche Namen eintragen.";
+            return;
+        }
+
+        if (!DateTime.TryParse(Datum, out var parsedDatum))
+        {
+            meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
+            return;
+        }
+
+        if (!TimeSpan.TryParse(Uhrzeit, out var parsedUhrzeit))
+        {
+            meldung = "Die angegebene Uhrzeit konnte nicht verarbeitet werden.";
+            return;
+        }
+
+        if (!klasseCodes.TryGetValue(Klasse.ToLower(), out var richtigerCode))
+        {
+            meldung = "Es gab ein Problem bei den Klassen-Codes.";
+            return;
+        }
+
+        if (!string.Equals(Klassencode, richtigerCode, StringComparison.OrdinalIgnoreCase))
+        {
+            meldung = "Der eingegebene Klassencode stimmt nicht.";
+            return;
+        }
+
+        try
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(BuchungenPath)!))
+                Directory.CreateDirectory(Path.GetDirectoryName(BuchungenPath)!);
+
+            var lines = File.Exists(BuchungenPath) ? File.ReadAllLines(BuchungenPath) : Array.Empty<string>();
+
+            // Termin prüfen
+            if (lines.Any(l =>
+            {
+                var parts = l.Split(';');
+                if (parts.Length >= 2 &&
+                    DateTime.TryParse(parts[0], out var existingDatum) &&
+                    TimeSpan.TryParse(parts[1], out var existingUhrzeit))
+                {
+                    return existingDatum.Date == parsedDatum.Date &&
+                           existingUhrzeit == parsedUhrzeit;
+                }
+                return false;
+            }))
+            {
+                meldung = "Dieser Termin ist bereits belegt!";
+                return;
+            }
+
+            // Schüler prüfen
+            foreach (var line in lines)
+            {
+                var parts = line.Split(';');
+                if (parts.Length >= 4 && DateTime.TryParse(parts[0], out var existingDatum))
+                {
+                    var gebuchteSchueler = parts[3].Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    var schonGebucht = schuelerListe.FirstOrDefault(s => gebuchteSchueler.Contains(s));
+                    if (existingDatum.Date == parsedDatum.Date && schonGebucht != null)
+                    {
+                        meldung = $"{schonGebucht} hat an diesem Tag bereits gebucht!";
+                        return;
+                    }
+                }
+            }
+
+            // Buchung vorbereiten mit ISO-Datum
+            var eintrag = $"{parsedDatum:yyyy-MM-dd};{parsedUhrzeit:hh\\:mm};{Klasse};{Schueler1}, {Schueler2}, {Schueler3};{Klassencode}";
+            await File.AppendAllTextAsync(BuchungenPath, eintrag + Environment.NewLine);
+
+            // GitHub Upload
+            bool success = await GitHubUploader.UploadOrUpdateFileAsync(
+                path: "Data/buchungen.txt",
+                content: File.ReadAllText(BuchungenPath),
+                commitMessage: $"Neue Buchung: {Datum} {Uhrzeit}"
+            );
+
+            if (success)
+            {
+                meldung = "Buchung erfolgreich gespeichert und hochgeladen!";
+                // Formular zurücksetzen
+                Klasse = "";
+                Schueler1 = "";
+                Schueler2 = "";
+                Schueler3 = "";
+                Klassencode = "";
+            }
+            else
+            {
+                // Eintrag aus Datei entfernen
+                var currentLines = File.ReadAllLines(BuchungenPath).ToList();
+                currentLines.RemoveAll(l => l == eintrag);
+                await File.WriteAllLinesAsync(BuchungenPath, currentLines);
+
+                meldung = "Buchung konnte nicht hochgeladen werden. Bitte später erneut versuchen.";
+            }
+        }
+        catch
+        {
+            meldung = "Beim Speichern der Buchung ist ein Fehler aufgetreten. Bitte später erneut versuchen.";
+        }
+    }
+}
