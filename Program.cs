@@ -67,7 +67,7 @@ var accountsPath = Path.Combine(dataPath, "accounts");
 if (!File.Exists(accountsPath))
 {
     File.WriteAllText(accountsPath, "Admin=admin\n");
-    File.WriteAllText(accountsPath, "Jonas=admin\n");
+    File.WriteAllText(accountsPath, "Jonas=jonas\n");
 }
 
 if (!app.Environment.IsDevelopment())
@@ -89,3 +89,4 @@ app.MapRazorComponents<App>()
 app.Urls.Add("http://0.0.0.0:80");
 
 app.Run();
+
