@@ -4,6 +4,7 @@
 @inject GitHubUploader GitHubUploader
 @rendermode InteractiveServer
 
+
 <h3 style="color: #0d6efd;">Buchung Maker Space</h3>
 
 <div class="form-group">
@@ -175,12 +176,14 @@
             meldung = "Einige Schülernamen sind doppelt. Bitte unterschiedliche Namen eintragen.";
             return;
         }
+        using System.Globalization;
 
-        if (!DateTime.TryParse(Datum, out var parsedDatum))
+        if (!DateTime.TryParse(Datum, CultureInfo.GetCultureInfo("de-DE"), DateTimeStyles.None, out var parsedDatum))
         {
-            meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
-            return;
+          meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
+          return;
         }
+
 
         if (!TimeSpan.TryParse(Uhrzeit, out var parsedUhrzeit))
         {
@@ -278,6 +281,7 @@
         }
     }
 }
+
 
 
 
