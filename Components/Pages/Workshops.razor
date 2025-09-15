@@ -8,13 +8,14 @@
 <div class="max-w-7xl mx-auto px-6">
     <!-- Workshop Karten -->
     <div class="workshop-container">
-        @foreach (var w in WorkshopList.Where(w => w.IsAvailable))
+        @foreach (var w in WorkshopList.Where(w => w.IsAvailable && w.Date.Date >= DateTime.Today))
         {
             <div class="workshop-card">
                 <img src="@w.Image" alt="@w.Title" class="workshop-image" />
                 <h4>@w.Title</h4>
                 <p>@w.Description</p>
                 <p class="date">Termin: @w.Date.ToString("dd.MM.yyyy HH:mm")</p>
+                <p class="slots">@w.AvailableSlots/4 Plätze frei</p>
             </div>
         }
     </div>
@@ -42,9 +43,9 @@
             <label for="workshopselect">Workshop auswählen</label>
             <select id="workshopselect" @bind="SelectedWorkshop">
                 <option value="">-- Bitte wählen --</option>
-                @foreach (var w in WorkshopList.Where(w => w.IsAvailable))
+                @foreach (var w in WorkshopList.Where(w => w.IsAvailable && w.Date.Date >= DateTime.Today))
                 {
-                    <option value="@w.Title">@w.Title</option>
+                    <option value="@w.Title">@w.Title (@w.AvailableSlots/4 Plätze frei)</option>
                 }
             </select>
         </div>
@@ -70,6 +71,7 @@
         public string Image { get; set; } = "";
         public bool IsAvailable { get; set; } = false;
         public DateTime Date { get; set; } = DateTime.Today;
+        public int AvailableSlots { get; set; } = 4;
     }
 
     private List<WorkshopModel> WorkshopList = new()
@@ -94,6 +96,7 @@
     {
         await LoadKlassencodes();
         await LoadWorkshopStatus();
+        await UpdateAvailableSlots();
     }
 
     private async Task LoadKlassencodes()
@@ -115,13 +118,10 @@
     private async Task LoadWorkshopStatus()
     {
         var statusPath = Path.Combine(Env.ContentRootPath, "Data", "workshopstatus.txt");
-
         if (!File.Exists(statusPath))
         {
             foreach (var w in WorkshopList)
-            {
                 w.IsAvailable = false;
-            }
             return;
         }
 
@@ -134,15 +134,18 @@
             if (parts.Length != 2) continue;
 
             var key = parts[0].Trim();
-            var vals = parts[1].Split(';', 2, StringSplitOptions.RemoveEmptyEntries);
+            var vals = parts[1].Split(';', StringSplitOptions.RemoveEmptyEntries);
             if (vals.Length == 0) continue;
 
-            bool isAvailable = vals[0].Trim().ToLowerInvariant() == "true";
-            DateTime date = DateTime.Today;
-            if (vals.Length > 1 && DateTime.TryParse(vals[1].Trim(), out var parsedDate))
-                date = parsedDate;
+            bool isAvailable = vals[0].Trim().ToLower() == "true";
+            DateTime parsedDate = DateTime.Today;
 
-            statusDict[key] = (isAvailable, date);
+            if (vals.Length > 1 && DateTime.TryParse(vals[1].Trim(), out var tmpDate))
+            {
+                parsedDate = tmpDate;
+            }
+
+            statusDict[key] = (isAvailable, parsedDate);
         }
 
         foreach (var w in WorkshopList)
@@ -152,6 +155,32 @@
                 w.IsAvailable = val.IsAvailable;
                 w.Date = val.Date;
             }
+        }
+    }
+
+    private async Task UpdateAvailableSlots()
+    {
+        var filePath = Path.Combine(Env.ContentRootPath, "Data", "workshops.txt");
+        var bookings = new List<string[]>();
+        if (File.Exists(filePath))
+        {
+            bookings = (await File.ReadAllLinesAsync(filePath))
+                        .Skip(1)
+                        .Select(l => l.Split(';'))
+                        .Where(p => p.Length >= 5) // Name;Klasse;Workshop;Datum;Status
+                        .ToList();
+        }
+
+        foreach (var w in WorkshopList)
+        {
+            int bookedCount = bookings.Count(b =>
+                string.Equals(b[2].Trim(), w.Title, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(b[4].Trim().ToLower(), "accept") &&
+                DateTime.TryParse(b[3].Trim(), out var d) && d.Date == w.Date.Date
+            );
+
+            w.AvailableSlots = Math.Max(0, 4 - bookedCount);
+            w.IsAvailable = w.IsAvailable && w.AvailableSlots > 0;
         }
     }
 
@@ -176,6 +205,7 @@
         }
 
         await LoadWorkshopStatus();
+        await UpdateAvailableSlots();
 
         var workshop = WorkshopList.FirstOrDefault(w => w.Title == SelectedWorkshop);
         if (workshop == null || !workshop.IsAvailable)
@@ -190,13 +220,13 @@
 
         if (!File.Exists(filePath))
         {
-            await File.WriteAllTextAsync(filePath, "Name;Klasse;Workshop;Termin" + Environment.NewLine);
+            await File.WriteAllTextAsync(filePath, "Name;Klasse;Workshop;Termin;Status;Admin" + Environment.NewLine);
         }
 
         var existingBookings = (await File.ReadAllLinesAsync(filePath))
                                 .Skip(1)
                                 .Select(l => l.Split(';'))
-                                .Where(parts => parts.Length == 4)
+                                .Where(parts => parts.Length >= 5)
                                 .ToList();
 
         bool alreadyBooked = existingBookings.Any(b =>
@@ -209,16 +239,13 @@
             return;
         }
 
-        int currentCount = existingBookings.Count(b =>
-            string.Equals(b[2].Trim(), SelectedWorkshop.Trim(), StringComparison.OrdinalIgnoreCase));
-
-        if (currentCount >= 4)
+        if (workshop.AvailableSlots <= 0)
         {
             ErrorMessage = "Dieser Workshop ist bereits voll (max. 4 Teilnehmer).";
             return;
         }
 
-        var bookingLine = $"{UserName};{UserClass};{SelectedWorkshop};{workshop.Date:dd.MM.yyyy HH:mm}";
+        var bookingLine = $"{UserName};{UserClass};{SelectedWorkshop};{workshop.Date:dd.MM.yyyy HH:mm};;";
         await File.AppendAllTextAsync(filePath, bookingLine + Environment.NewLine);
 
         try
@@ -232,36 +259,28 @@
             if (!uploadSuccess)
             {
                 var allLines = (await File.ReadAllLinesAsync(filePath)).ToList();
-                if (allLines.Count > 1)
-                {
-                    allLines.RemoveAt(allLines.Count - 1);
-                    await File.WriteAllLinesAsync(filePath, allLines);
-                }
-
+                if (allLines.Count > 1) allLines.RemoveAt(allLines.Count - 1);
+                await File.WriteAllLinesAsync(filePath, allLines);
                 ErrorMessage = "Es ist ein Fehler aufgetreten. Die Buchung wurde zurückgesetzt.";
                 return;
             }
 
-            SuccessMessage = "Workshop erfolgreich gebucht und zu GitHub hochgeladen!";
+            SuccessMessage = "Workshop erfolgreich gebucht!";
+            UserName = "";
+            UserClass = "";
+            ClassCode = "";
+            SelectedWorkshop = "";
+
+            await UpdateAvailableSlots();
         }
         catch (Exception ex)
         {
             var allLines = (await File.ReadAllLinesAsync(filePath)).ToList();
-            if (allLines.Count > 1)
-            {
-                allLines.RemoveAt(allLines.Count - 1);
-                await File.WriteAllLinesAsync(filePath, allLines);
-            }
-
+            if (allLines.Count > 1) allLines.RemoveAt(allLines.Count - 1);
+            await File.WriteAllLinesAsync(filePath, allLines);
             ErrorMessage = "Es ist ein Fehler aufgetreten. Die Buchung wurde zurückgesetzt.";
             Console.WriteLine($"Fehler: {ex.Message}");
-            return;
         }
-
-        UserName = "";
-        UserClass = "";
-        ClassCode = "";
-        SelectedWorkshop = "";
     }
 }
 
@@ -287,9 +306,9 @@
         cursor: pointer;
     }
 
-    .workshop-card:hover {
-        background-color: #eff6ff;
-    }
+        .workshop-card:hover {
+            background-color: #eff6ff;
+        }
 
     .workshop-image {
         width: 100%;
@@ -317,7 +336,12 @@
         color: #2563eb;
         font-weight: 600;
         font-size: 0.875rem;
-        margin-top: auto;
+    }
+
+    .workshop-card .slots {
+        color: #16a34a;
+        font-weight: 600;
+        font-size: 0.9rem;
     }
 
     .booking-form {
@@ -330,13 +354,13 @@
         padding: 2rem;
     }
 
-    .booking-form h4 {
-        text-align: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2563eb;
-        margin-bottom: 1.75rem;
-    }
+        .booking-form h4 {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 1.75rem;
+        }
 
     .input-group {
         margin-bottom: 0.75rem;
@@ -364,13 +388,13 @@
         transition: border-color 0.25s ease;
     }
 
-    input[type="text"]:focus,
-    input[type="password"]:focus,
-    select:focus {
-        outline: none;
-        border-color: #0d6efd;
-        box-shadow: 0 0 8px rgba(13,110,253,0.5);
-    }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13,110,253,0.5);
+        }
 
     button {
         width: 100%;
@@ -386,9 +410,9 @@
         transition: background-color 0.3s ease;
     }
 
-    button:hover {
-        background-color: #0b5ed7;
-    }
+        button:hover {
+            background-color: #0b5ed7;
+        }
 
     .error-message {
         color: #dc3545;
