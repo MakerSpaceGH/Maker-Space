@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -15,16 +15,33 @@ public class GitHubUploader
 
     public GitHubUploader()
     {
-        // appsettings.json laden
-        var config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
+        // ✅ Erst Environment Variablen probieren (Render)
+        _owner = Environment.GetEnvironmentVariable("GITHUB_OWNER");
+        _repo = Environment.GetEnvironmentVariable("GITHUB_REPO");
+        _token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
 
-        var section = config.GetSection("GitHub");
-        _owner = section["Owner"] ?? throw new Exception("Owner fehlt in appsettings.json");
-        _repo = section["Repo"] ?? throw new Exception("Repo fehlt in appsettings.json");
-        _token = section["Token"] ?? throw new Exception("Token fehlt in appsettings.json");
+        // ✅ Falls nicht vorhanden → auf appsettings.json zurückfallen (lokales Debugging)
+        if (string.IsNullOrWhiteSpace(_owner) ||
+            string.IsNullOrWhiteSpace(_repo) ||
+            string.IsNullOrWhiteSpace(_token))
+        {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // optional gemacht!
+                .Build();
+
+            var section = config.GetSection("GitHub");
+            _owner ??= section["Owner"];
+            _repo ??= section["Repo"];
+            _token ??= section["Token"];
+        }
+
+        if (string.IsNullOrWhiteSpace(_owner) ||
+            string.IsNullOrWhiteSpace(_repo) ||
+            string.IsNullOrWhiteSpace(_token))
+        {
+            throw new Exception("❌ Es ist ein Fehler aufgetreten, Versuche es später erneut!).");
+        }
     }
 
     public async Task<bool> UploadOrUpdateFileAsync(string path, string content, string commitMessage)
@@ -37,7 +54,7 @@ public class GitHubUploader
 
         string sha = null;
 
-        // Prüfen, ob Datei existiert
+        // 🔍 Prüfen, ob Datei existiert
         var response = await http.GetAsync(baseUrl);
         if (response.IsSuccessStatusCode)
         {
@@ -46,7 +63,7 @@ public class GitHubUploader
             sha = doc.RootElement.GetProperty("sha").GetString();
         }
 
-        // Payload vorbereiten
+        // 📦 Payload vorbereiten
         var payload = new
         {
             message = commitMessage,
@@ -57,7 +74,7 @@ public class GitHubUploader
         var jsonPayload = JsonSerializer.Serialize(payload);
         var putContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        // Upload oder Update
+        // 🚀 Upload oder Update
         var putResponse = await http.PutAsync(baseUrl, putContent);
         return putResponse.IsSuccessStatusCode;
     }
