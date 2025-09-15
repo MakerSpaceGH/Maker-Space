@@ -173,7 +173,7 @@
 
         foreach (var w in WorkshopList)
         {
-            int bookedCount = bookings.Count(b =>
+            int bookedCount = bookings.Count(b => 
                 string.Equals(b[2].Trim(), w.Title, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(b[4].Trim().ToLower(), "accept") &&
                 DateTime.TryParse(b[3].Trim(), out var d) && d.Date == w.Date.Date
@@ -229,10 +229,15 @@
                                 .Where(parts => parts.Length >= 5)
                                 .ToList();
 
-        bool alreadyBooked = existingBookings.Any(b =>
-            string.Equals(b[0].Trim(), UserName.Trim(), StringComparison.OrdinalIgnoreCase) &&
-            string.Equals(b[2].Trim(), SelectedWorkshop.Trim(), StringComparison.OrdinalIgnoreCase));
+      
 
+        bool alreadyBooked = existingBookings.Any(b =>
+         string.Equals(b[0].Trim(), UserName.Trim(), StringComparison.OrdinalIgnoreCase) &&
+         string.Equals(b[2].Trim(), SelectedWorkshop.Trim(), StringComparison.OrdinalIgnoreCase) &&
+         DateTime.TryParse(b[3].Trim(), out var bookedDate) &&
+         bookedDate.Date == workshop.Date.Date
+     
+);
         if (alreadyBooked)
         {
             ErrorMessage = "Du hast diesen Workshop bereits gebucht.";
@@ -285,146 +290,146 @@
 }
 
 <style>
-    .workshop-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        margin-bottom: 3.5rem;
-    }
+.workshop-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 3.5rem;
+}
 
-    .workshop-card {
-        width: 320px;
-        background: white;
-        border: 4px solid #2563eb;
-        border-radius: 12px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        padding: 1.25rem;
-        display: flex;
-        flex-direction: column;
-        transition: background-color 0.3s ease;
-        cursor: pointer;
-    }
+.workshop-card {
+    width: 320px;
+    background: white;
+    border: 4px solid #2563eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
 
-        .workshop-card:hover {
-            background-color: #eff6ff;
-        }
+.workshop-card:hover {
+    background-color: #eff6ff;
+}
 
-    .workshop-image {
-        width: 100%;
-        height: 220px;
-        object-fit: cover;
-        border-radius: 12px 12px 0 0;
-        margin-bottom: 0.5rem;
-    }
+.workshop-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0.5rem;
+}
 
-    .workshop-card h4 {
-        color: #1e40af;
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin: 0 0 0.25rem 0;
-    }
+.workshop-card h4 {
+    color: #1e40af;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+}
 
-    .workshop-card p {
-        color: #374151;
-        font-size: 0.875rem;
-        flex-grow: 1;
-        margin: 0 0 0.5rem 0;
-    }
+.workshop-card p {
+    color: #374151;
+    font-size: 0.875rem;
+    flex-grow: 1;
+    margin: 0 0 0.5rem 0;
+}
 
-    .workshop-card .date {
-        color: #2563eb;
-        font-weight: 600;
-        font-size: 0.875rem;
-    }
+.workshop-card .date {
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
 
-    .workshop-card .slots {
-        color: #16a34a;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
+.workshop-card .slots {
+    color: #16a34a;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
 
-    .booking-form {
-        background: white;
-        max-width: 440px;
-        margin: 0 auto 3rem auto;
-        border-radius: 1.5rem;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        border: 1px solid #93c5fd;
-        padding: 2rem;
-    }
+.booking-form {
+    background: white;
+    max-width: 440px;
+    margin: 0 auto 3rem auto;
+    border-radius: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: 1px solid #93c5fd;
+    padding: 2rem;
+}
 
-        .booking-form h4 {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 1.75rem;
-        }
+.booking-form h4 {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 1.75rem;
+}
 
-    .input-group {
-        margin-bottom: 0.75rem;
-    }
+.input-group {
+    margin-bottom: 0.75rem;
+}
 
-    label {
-        display: block;
-        font-weight: 600;
-        color: #1e40af;
-        margin-bottom: 0.25rem;
-        font-size: 0.95rem;
-    }
+label {
+    display: block;
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
 
-    input[type="text"],
-    input[type="password"],
-    select {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #1e40af;
-        border: 2px solid #3b82f6;
-        border-radius: 0.625rem;
-        box-sizing: border-box;
-        transition: border-color 0.25s ease;
-    }
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e40af;
+    border: 2px solid #3b82f6;
+    border-radius: 0.625rem;
+    box-sizing: border-box;
+    transition: border-color 0.25s ease;
+}
 
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #0d6efd;
-            box-shadow: 0 0 8px rgba(13,110,253,0.5);
-        }
+input[type="text"]:focus,
+input[type="password"]:focus,
+select:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 8px rgba(13,110,253,0.5);
+}
 
-    button {
-        width: 100%;
-        padding: 0.75rem;
-        background-color: #0d6efd;
-        color: white;
-        font-weight: 600;
-        font-size: 1rem;
-        border: none;
-        border-radius: 1rem;
-        cursor: pointer;
-        margin-top: 1rem;
-        transition: background-color 0.3s ease;
-    }
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #0d6efd;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
 
-        button:hover {
-            background-color: #0b5ed7;
-        }
+button:hover {
+    background-color: #0b5ed7;
+}
 
-    .error-message {
-        color: #dc3545;
-        font-weight: 600;
-        margin-top: 1rem;
-        text-align: center;
-    }
+.error-message {
+    color: #dc3545;
+    font-weight: 600;
+    margin-top: 1rem;
+    text-align: center;
+}
 
-    .success-message {
-        color: #198754;
-        font-weight: 600;
-        margin-top: 1rem;
-        text-align: center;
-    }
+.success-message {
+    color: #198754;
+    font-weight: 600;
+    margin-top: 1rem;
+    text-align: center;
+}
 </style>
