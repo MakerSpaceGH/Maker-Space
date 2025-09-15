@@ -1,4 +1,4 @@
-﻿@page "/Workshops"
+@page "/Workshops"
 @inject IWebHostEnvironment Env
 @inject GitHubUploader GitHubUploader
 @rendermode InteractiveServer
@@ -68,7 +68,7 @@
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public string Image { get; set; } = "";
-        public bool IsAvailable { get; set; } = false; // default false
+        public bool IsAvailable { get; set; } = false;
         public DateTime Date { get; set; } = DateTime.Today;
     }
 
@@ -118,7 +118,6 @@
 
         if (!File.Exists(statusPath))
         {
-            // Datei existiert nicht → keine Workshops verfügbar
             foreach (var w in WorkshopList)
             {
                 w.IsAvailable = false;
@@ -189,20 +188,17 @@
         if (!Directory.Exists(Path.GetDirectoryName(filePath)!))
             Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
-        // Kopfzeile erstellen, falls Datei nicht existiert
         if (!File.Exists(filePath))
         {
             await File.WriteAllTextAsync(filePath, "Name;Klasse;Workshop;Termin" + Environment.NewLine);
         }
 
-        // Aktuelle Buchungen laden
         var existingBookings = (await File.ReadAllLinesAsync(filePath))
-                                .Skip(1) // Kopfzeile überspringen
+                                .Skip(1)
                                 .Select(l => l.Split(';'))
                                 .Where(parts => parts.Length == 4)
                                 .ToList();
 
-        // Prüfen, ob Schüler schon gebucht hat
         bool alreadyBooked = existingBookings.Any(b =>
             string.Equals(b[0].Trim(), UserName.Trim(), StringComparison.OrdinalIgnoreCase) &&
             string.Equals(b[2].Trim(), SelectedWorkshop.Trim(), StringComparison.OrdinalIgnoreCase));
@@ -213,7 +209,6 @@
             return;
         }
 
-        // Prüfen, ob Workshop schon 4 Teilnehmer hat
         int currentCount = existingBookings.Count(b =>
             string.Equals(b[2].Trim(), SelectedWorkshop.Trim(), StringComparison.OrdinalIgnoreCase));
 
@@ -223,20 +218,45 @@
             return;
         }
 
-        // Buchung speichern
         var bookingLine = $"{UserName};{UserClass};{SelectedWorkshop};{workshop.Date:dd.MM.yyyy HH:mm}";
         await File.AppendAllTextAsync(filePath, bookingLine + Environment.NewLine);
 
-        // 🔹 GitHub-Upload
-        bool uploadSuccess = await GitHubUploader.UploadOrUpdateFileAsync(
-            path: "Data/workshops.txt",
-            content: File.ReadAllText(filePath),
-            commitMessage: $"Neue Workshop-Buchung: {SelectedWorkshop} - {UserName}"
-        );
+        try
+        {
+            bool uploadSuccess = await GitHubUploader.UploadOrUpdateFileAsync(
+                path: "Data/workshops.txt",
+                content: await File.ReadAllTextAsync(filePath),
+                commitMessage: $"Neue Workshop-Buchung: {SelectedWorkshop} - {UserName}"
+            );
 
-        SuccessMessage = uploadSuccess
-            ? "Workshop erfolgreich gebucht und zu GitHub hochgeladen!"
-            : "Workshop gebucht, Upload zu GitHub fehlgeschlagen.";
+            if (!uploadSuccess)
+            {
+                var allLines = (await File.ReadAllLinesAsync(filePath)).ToList();
+                if (allLines.Count > 1)
+                {
+                    allLines.RemoveAt(allLines.Count - 1);
+                    await File.WriteAllLinesAsync(filePath, allLines);
+                }
+
+                ErrorMessage = "Es ist ein Fehler aufgetreten. Die Buchung wurde zurückgesetzt.";
+                return;
+            }
+
+            SuccessMessage = "Workshop erfolgreich gebucht und zu GitHub hochgeladen!";
+        }
+        catch (Exception ex)
+        {
+            var allLines = (await File.ReadAllLinesAsync(filePath)).ToList();
+            if (allLines.Count > 1)
+            {
+                allLines.RemoveAt(allLines.Count - 1);
+                await File.WriteAllLinesAsync(filePath, allLines);
+            }
+
+            ErrorMessage = "Es ist ein Fehler aufgetreten. Die Buchung wurde zurückgesetzt.";
+            Console.WriteLine($"Fehler: {ex.Message}");
+            return;
+        }
 
         UserName = "";
         UserClass = "";
@@ -267,9 +287,9 @@
         cursor: pointer;
     }
 
-        .workshop-card:hover {
-            background-color: #eff6ff;
-        }
+    .workshop-card:hover {
+        background-color: #eff6ff;
+    }
 
     .workshop-image {
         width: 100%;
@@ -310,13 +330,13 @@
         padding: 2rem;
     }
 
-        .booking-form h4 {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 1.75rem;
-        }
+    .booking-form h4 {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2563eb;
+        margin-bottom: 1.75rem;
+    }
 
     .input-group {
         margin-bottom: 0.75rem;
@@ -344,13 +364,13 @@
         transition: border-color 0.25s ease;
     }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #0d6efd;
-            box-shadow: 0 0 8px rgba(13,110,253,0.5);
-        }
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    select:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 8px rgba(13,110,253,0.5);
+    }
 
     button {
         width: 100%;
@@ -366,9 +386,9 @@
         transition: background-color 0.3s ease;
     }
 
-        button:hover {
-            background-color: #0b5ed7;
-        }
+    button:hover {
+        background-color: #0b5ed7;
+    }
 
     .error-message {
         color: #dc3545;
