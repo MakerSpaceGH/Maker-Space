@@ -27,8 +27,7 @@
            style="max-width:300px;">
 </div>
 
-<button class="btn btn-secondary mb-3" @onclick="LogoutAsync">Logout</button>
-
+<button class="btn btn-secondary mb-3" @onclick="Logout">Logout</button>
 
 @if (filteredBuchungen == null)
 {
@@ -50,6 +49,9 @@ else
                     <th>🏫 Klasse</th>
                     <th>👤 Schüler</th>
                     <th>🔑 Code</th>
+                    <th>✅ Status</th>
+                    <th>🛠️ Aktion</th>
+                    <th>✍️ Bearbeitet von</th>
                 }
                 else
                 {
@@ -57,54 +59,66 @@ else
                     <th>👤 Name</th>
                     <th>🏫 Klasse</th>
                     <th>🎯 Workshop</th>
+                    <th>✅ Status</th>
+                    <th>✍️ Bearbeitet von</th>
                 }
-                <th>✅ Status</th>
-                <th>🛠️ Aktion</th>
-                <th>✍️ Bearbeitet von</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var b in filteredBuchungen)
             {
-                <tr>
-                    @if (SelectedKategorie == "raum")
-                    {
+                if (SelectedKategorie == "raum")
+                {
+                    <tr>
                         <td>@b.Datum</td>
                         <td>@b.Uhrzeit</td>
                         <td>@b.Klasse</td>
                         <td>@b.Schueler</td>
                         <td>@b.Code</td>
-                    }
-                    else
-                    {
+                        <td>
+                            @if (b.Status == "accept")
+                            {
+                                <span style="color:green; font-weight:bold;">@b.Status</span>
+                            }
+                            else
+                            {
+                                <span style="color:#0D47A1;">Offen</span>
+                            }
+                        </td>
+                        <td>
+                            @if (b.Status != "accept")
+                            {
+                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
+                            }
+                            else
+                            {
+                                <em>Abgehakt</em>
+                            }
+                        </td>
+                        <td>@b.BearbeitetVon</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
                         <td>@b.Uhrzeit</td>
                         <td>@b.Schueler</td>
                         <td>@b.Klasse</td>
                         <td>@b.Code</td>
-                    }
-                    <td>
-                        @if (b.Status == "accept")
-                        {
-                            <span style="color:green; font-weight:bold;">@b.Status</span>
-                        }
-                        else
-                        {
-                            <span style="color:#0D47A1;">Offen</span>
-                        }
-                    </td>
-                    <td>
-                        @if (b.Status != "accept")
-                        {
-                            <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                            <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
-                        }
-                        else
-                        {
-                            <em>Abgehakt</em>
-                        }
-                    </td>
-                    <td>@b.BearbeitetVon</td>
-                </tr>
+                        <td>
+                            @if (b.Status == "accept")
+                            {
+                                <span style="color:green; font-weight:bold;">@b.Status</span>
+                            }
+                            else
+                            {
+                                <span style="color:#0D47A1;">Offen</span>
+                            }
+                        </td>
+                        <td>@b.BearbeitetVon</td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
@@ -130,7 +144,9 @@ else
     string RaumPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
     string WorkshopPath => Path.Combine(Env.ContentRootPath, "Data", "workshops.txt");
 
-    protected override void OnInitialized()
+    private bool jsInitialized = false;
+
+    protected override async Task OnInitializedAsync()
     {
         if (!LoginService.IsLoggedIn)
         {
@@ -140,24 +156,25 @@ else
 
         LoadBuchungen();
         FilterBuchungen();
+
+        // Navigation auf andere Pages überwachen
+        Navigation.LocationChanged += (_, __) => Logout();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && !jsInitialized)
         {
-            // Auto-Logout bei Fenster schließen
+            jsInitialized = true;
             await JS.InvokeVoidAsync("window.addEventListener", "beforeunload",
                 DotNetObjectReference.Create(this), "LogoutJS");
-
-            Navigation.LocationChanged += async (s, e) => await LogoutAsync();
         }
     }
 
     [JSInvokable]
-    public async Task LogoutJS()
+    public void LogoutJS()
     {
-        await LogoutAsync();
+        Logout();
     }
 
     void OnKategorieChanged(ChangeEventArgs e)
@@ -269,7 +286,8 @@ else
             await GitHubUploader.UploadOrUpdateFileAsync(
                 path.Replace(Env.ContentRootPath + Path.DirectorySeparatorChar, ""),
                 File.ReadAllText(path),
-                $"{SelectedKategorie} Buchungen aktualisiert von {LoginService.CurrentUsername}");
+                $"{SelectedKategorie} Buchungen aktualisiert von {LoginService.CurrentUsername}"
+            );
         }
     }
 
@@ -282,10 +300,12 @@ else
         }
     }
 
-    async Task LogoutAsync()
+    void Logout()
     {
-        LoginService.Logout();
-        Navigation.NavigateTo("/");
-        await Task.CompletedTask;
+        if (LoginService.IsLoggedIn)
+        {
+            LoginService.Logout();
+            Navigation.NavigateTo("/");
+        }
     }
 }
