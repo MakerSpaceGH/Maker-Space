@@ -1,15 +1,16 @@
-﻿@page "/LoggedIn"
+@page "/LoggedIn"
 @using My_own_website.Services
-@inject LoginManager LoginManager
+@inject LoginManager LoginService
 @inject NavigationManager Navigation
 @inject IWebHostEnvironment Env
 @inject BackupService BackupService
 @inject GitHubUploader GitHubUploader
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 <h3 style="color:#1E3A8A; margin-bottom: 0.5rem;">Buchungen Übersicht</h3>
 <p style="color:#1E3A8A; font-weight: 600; margin-top: 0; margin-bottom: 1.5rem;">
-    Hallo, @LoginManager.CurrentUsername!
+    Hallo, @LoginService.CurrentUsername!
 </p>
 
 <div class="mb-3">
@@ -26,7 +27,8 @@
            style="max-width:300px;">
 </div>
 
-<button class="btn btn-secondary mb-3" @onclick="Logout">Logout</button>
+<button class="btn btn-secondary mb-3" @onclick="LogoutAsync">Logout</button>
+
 
 @if (filteredBuchungen == null)
 {
@@ -48,9 +50,6 @@ else
                     <th>🏫 Klasse</th>
                     <th>👤 Schüler</th>
                     <th>🔑 Code</th>
-                    <th>✅ Status</th>
-                    <th>🛠️ Aktion</th>
-                    <th>✍️ Bearbeitet von</th>
                 }
                 else
                 {
@@ -58,66 +57,54 @@ else
                     <th>👤 Name</th>
                     <th>🏫 Klasse</th>
                     <th>🎯 Workshop</th>
-                    <th>✅ Status</th>
-                    <th>✍️ Bearbeitet von</th>
                 }
+                <th>✅ Status</th>
+                <th>🛠️ Aktion</th>
+                <th>✍️ Bearbeitet von</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var b in filteredBuchungen)
             {
-                if (SelectedKategorie == "raum")
-                {
-                    <tr>
+                <tr>
+                    @if (SelectedKategorie == "raum")
+                    {
                         <td>@b.Datum</td>
                         <td>@b.Uhrzeit</td>
                         <td>@b.Klasse</td>
                         <td>@b.Schueler</td>
                         <td>@b.Code</td>
-                        <td>
-                            @if (b.Status == "accept")
-                            {
-                                <span style="color:green; font-weight:bold;">@b.Status</span>
-                            }
-                            else
-                            {
-                                <span style="color:#0D47A1;">Offen</span>
-                            }
-                        </td>
-                        <td>
-                            @if (b.Status != "accept")
-                            {
-                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
-                            }
-                            else
-                            {
-                                <em>Abgehakt</em>
-                            }
-                        </td>
-                        <td>@b.BearbeitetVon</td>
-                    </tr>
-                }
-                else
-                {
-                    <tr>
+                    }
+                    else
+                    {
                         <td>@b.Uhrzeit</td>
                         <td>@b.Schueler</td>
                         <td>@b.Klasse</td>
                         <td>@b.Code</td>
-                        <td>
-                            @if (b.Status == "accept")
-                            {
-                                <span style="color:green; font-weight:bold;">@b.Status</span>
-                            }
-                            else
-                            {
-                                <span style="color:#0D47A1;">Offen</span>
-                            }
-                        </td>
-                        <td>@b.BearbeitetVon</td>
-                    </tr>
-                }
+                    }
+                    <td>
+                        @if (b.Status == "accept")
+                        {
+                            <span style="color:green; font-weight:bold;">@b.Status</span>
+                        }
+                        else
+                        {
+                            <span style="color:#0D47A1;">Offen</span>
+                        }
+                    </td>
+                    <td>
+                        @if (b.Status != "accept")
+                        {
+                            <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                            <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
+                        }
+                        else
+                        {
+                            <em>Abgehakt</em>
+                        }
+                    </td>
+                    <td>@b.BearbeitetVon</td>
+                </tr>
             }
         </tbody>
     </table>
@@ -131,7 +118,7 @@ else
         public string Klasse { get; set; } = "";
         public string Schueler { get; set; } = "";
         public string Code { get; set; } = "";
-        public string Status { get; set; } = "";
+        public string Status { get; set; } = "offen"; // leer = offen
         public string BearbeitetVon { get; set; } = "";
     }
 
@@ -143,9 +130,9 @@ else
     string RaumPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
     string WorkshopPath => Path.Combine(Env.ContentRootPath, "Data", "workshops.txt");
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        if (!LoginManager.IsLoggedIn)
+        if (!LoginService.IsLoggedIn)
         {
             Navigation.NavigateTo("/");
             return;
@@ -153,6 +140,24 @@ else
 
         LoadBuchungen();
         FilterBuchungen();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Auto-Logout bei Fenster schließen
+            await JS.InvokeVoidAsync("window.addEventListener", "beforeunload",
+                DotNetObjectReference.Create(this), "LogoutJS");
+
+            Navigation.LocationChanged += async (s, e) => await LogoutAsync();
+        }
+    }
+
+    [JSInvokable]
+    public async Task LogoutJS()
+    {
+        await LogoutAsync();
     }
 
     void OnKategorieChanged(ChangeEventArgs e)
@@ -173,11 +178,12 @@ else
         foreach (var line in lines)
         {
             if (string.IsNullOrWhiteSpace(line)) continue;
-
             var parts = line.Split(';');
+
             if (SelectedKategorie == "raum")
             {
                 if (parts.Length < 5) continue;
+                string status = parts.Length > 5 && !string.IsNullOrWhiteSpace(parts[5]) ? parts[5].Trim() : "offen";
 
                 buchungen.Add(new Buchung
                     {
@@ -186,13 +192,14 @@ else
                         Klasse = parts[2].Trim(),
                         Schueler = parts[3].Trim(),
                         Code = parts[4].Trim(),
-                        Status = parts.Length > 5 ? parts[5].Trim() : "",
+                        Status = status,
                         BearbeitetVon = parts.Length > 6 ? parts[6].Trim() : ""
                     });
             }
             else
             {
                 if (parts.Length < 4) continue;
+                string status = parts.Length > 4 && !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "offen";
 
                 buchungen.Add(new Buchung
                     {
@@ -200,7 +207,7 @@ else
                         Schueler = parts[1].Trim(),
                         Klasse = parts[2].Trim(),
                         Code = parts[3].Trim(),
-                        Status = parts.Length > 4 ? parts[4].Trim() : "",
+                        Status = status,
                         BearbeitetVon = parts.Length > 5 ? parts[5].Trim() : ""
                     });
             }
@@ -228,31 +235,18 @@ else
     void SaveBuchungen()
     {
         string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
-
         var lines = SelectedKategorie == "raum"
             ? buchungen.Select(b => $"{b.Datum};{b.Uhrzeit};{b.Klasse};{b.Schueler};{b.Code};{b.Status};{b.BearbeitetVon}")
             : buchungen.Select(b => $"{b.Uhrzeit};{b.Schueler};{b.Klasse};{b.Code};{b.Status};{b.BearbeitetVon}");
-
         File.WriteAllLines(path, lines);
     }
 
     async Task MarkAcceptAsync(Buchung b)
     {
         b.Status = "accept";
-        b.BearbeitetVon = LoginManager.CurrentUsername;
+        b.BearbeitetVon = LoginService.CurrentUsername;
         SaveBuchungen();
-
-        string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
-        await BackupService.BackupFileAsync(path, path);
-
-        if (GitHubUploader != null)
-        {
-            await GitHubUploader.UploadOrUpdateFileAsync(
-                path.Replace(Env.ContentRootPath + Path.DirectorySeparatorChar, ""),
-                File.ReadAllText(path),
-                $"{SelectedKategorie} Buchung akzeptiert: {b.Schueler} von {LoginManager.CurrentUsername}");
-        }
-
+        await BackupAndGitHubUpload();
         FilterBuchungen();
         StateHasChanged();
     }
@@ -261,20 +255,22 @@ else
     {
         buchungen.Remove(b);
         SaveBuchungen();
+        await BackupAndGitHubUpload();
+        FilterBuchungen();
+        StateHasChanged();
+    }
 
+    async Task BackupAndGitHubUpload()
+    {
         string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
         await BackupService.BackupFileAsync(path, path);
-
         if (GitHubUploader != null)
         {
             await GitHubUploader.UploadOrUpdateFileAsync(
                 path.Replace(Env.ContentRootPath + Path.DirectorySeparatorChar, ""),
                 File.ReadAllText(path),
-                $"{SelectedKategorie} Buchung gelöscht: {b.Schueler} von {LoginManager.CurrentUsername}");
+                $"{SelectedKategorie} Buchungen aktualisiert von {LoginService.CurrentUsername}");
         }
-
-        FilterBuchungen();
-        StateHasChanged();
     }
 
     void OnEnterSearch(KeyboardEventArgs e)
@@ -286,9 +282,10 @@ else
         }
     }
 
-    void Logout()
+    async Task LogoutAsync()
     {
-        LoginManager.Logout();
+        LoginService.Logout();
         Navigation.NavigateTo("/");
+        await Task.CompletedTask;
     }
 }
