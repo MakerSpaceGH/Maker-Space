@@ -1,8 +1,8 @@
 John;9c;Podcast;;;Admin;
 Klaas;9c;Podcast;;;Admin;
 Leonie;9c;Podcast;;;Admin;
-Jonas Gohr;9c;Davinci;;;Admin;
-Jonas;9c;Davinci;;;Admin;
+Jonas Gohr;9c;Davinci;;;accept;Admin
+Jonas;9c;Davinci;;;accept;Admin
 Jonas;9c;3DPrinter;;;accept;Admin
 Jonas;9c;Podcast;;;accept;Admin
 Jonas Gohr;9c;Davinci;;;accept;Admin
