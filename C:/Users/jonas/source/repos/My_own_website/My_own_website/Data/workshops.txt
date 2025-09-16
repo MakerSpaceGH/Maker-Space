@@ -1,4 +1,4 @@
-John;9c;Podcast;10.08.2025 13:00;accept;Admin;
+John;9c;Podcast;10.08.2025 13:00;accept;accept;Admin
 Klaas;9c;Podcast;10.08.2025 13:00;accept;accept;Admin
 Leonie;9c;Podcast;10.08.2025 13:00;accept;accept;Admin
 Jonas Gohr;9c;Davinci;15.09.2025 00:00;accept;accept;Admin
