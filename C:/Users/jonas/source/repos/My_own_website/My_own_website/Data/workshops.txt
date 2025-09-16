@@ -1,9 +1,9 @@
-Jonas;9c;Davinci;2025-10-30 14:00;accept;Admin
-Jonas Gohr;9c;Davinci;2025-10-30 14:00;offen;
-Jonas;9c;Podcast;2025-10-10 13:00;accept;Admin
-Jonas;9c;3DPrinter;2025-10-25 10:00;accept;Admin
-Jonas;9c;Davinci;2025-07-30 14:00;accept;Admin
-Jonas Gohr;9c;Davinci;2025-09-15 00:00;accept;Admin
-Leonie;9c;Podcast;2025-08-10 13:00;accept;Admin
-Klaas;9c;Podcast;2025-08-10 13:00;accept;Admin
-John;9c;Podcast;2025-08-10 13:00;accept;Admin
+John;9c;Podcast;10.08.2025 13:00;accept;Admin;
+Klaas;9c;Podcast;10.08.2025 13:00;accept;Admin;
+Leonie;9c;Podcast;10.08.2025 13:00;accept;Admin;
+Jonas Gohr;9c;Davinci;15.09.2025 00:00;accept;Admin;
+Jonas;9c;Davinci;30.07.2025 14:00;accept;Admin;
+Jonas;9c;3DPrinter;25.10.2025 10:00;accept;Admin;
+Jonas;9c;Podcast;10.10.2025 13:00;accept;Admin;
+Jonas Gohr;9c;Davinci;30.10.2025 14:00;;offen;
+Jonas;9c;Davinci;30.10.2025 14:00;;accept;Admin
