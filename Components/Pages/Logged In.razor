@@ -1,5 +1,6 @@
 @page "/LoggedIn"
 @using My_own_website.Services
+@using System.Globalization
 @inject LoginManager LoginService
 @inject NavigationManager Navigation
 @inject IWebHostEnvironment Env
@@ -14,17 +15,14 @@
 </p>
 
 <div class="mb-3">
-    <select class="form-select" style="max-width:250px" @onchange="OnKategorieChanged">
-        <option value="raum" selected="@(SelectedKategorie == "raum")">Maker Space Buchungen</option>
-        <option value="workshop" selected="@(SelectedKategorie == "workshop")">Workshop Buchungen</option>
+    <select class="form-select" style="max-width:250px" @onchange="OnKategorieChanged" value="@SelectedKategorie">
+        <option value="raum">Maker Space Buchungen</option>
+        <option value="workshop">Workshop Buchungen</option>
     </select>
 </div>
 
 <div class="mb-3">
-    <input type="text" class="form-control" placeholder="Suche nach Name..."
-           @bind="SearchTerm"
-           @onkeydown="OnEnterSearch"
-           style="max-width:300px;">
+    <input type="text" class="form-control" placeholder="Suche nach Name..." @bind="SearchTerm" @onkeydown="OnEnterSearch" style="max-width:300px;">
 </div>
 
 <button class="btn btn-secondary mb-3" @onclick="Logout">Logout</button>
@@ -55,11 +53,13 @@ else
                 }
                 else
                 {
-                    <th>⏰ Uhrzeit</th>
                     <th>👤 Name</th>
                     <th>🏫 Klasse</th>
                     <th>🎯 Workshop</th>
+                    <th>🗓️ Datum</th>
+                    <th>⏰ Uhrzeit</th>
                     <th>✅ Status</th>
+                    <th>🛠️ Aktion</th>
                     <th>✍️ Bearbeitet von</th>
                 }
             </tr>
@@ -67,9 +67,9 @@ else
         <tbody>
             @foreach (var b in filteredBuchungen)
             {
-                if (SelectedKategorie == "raum")
-                {
-                    <tr>
+                <tr>
+                    @if (SelectedKategorie == "raum")
+                    {
                         <td>@b.Datum</td>
                         <td>@b.Uhrzeit</td>
                         <td>@b.Klasse</td>
@@ -79,6 +79,10 @@ else
                             @if (b.Status == "accept")
                             {
                                 <span style="color:green; font-weight:bold;">@b.Status</span>
+                            }
+                            else if (b.Status == "nicht gekommen")
+                            {
+                                <span style="color:red; font-weight:bold;">@b.Status</span>
                             }
                             else
                             {
@@ -97,28 +101,42 @@ else
                             }
                         </td>
                         <td>@b.BearbeitetVon</td>
-                    </tr>
-                }
-                else
-                {
-                    <tr>
-                        <td>@b.Uhrzeit</td>
+                    }
+                    else
+                    {
                         <td>@b.Schueler</td>
                         <td>@b.Klasse</td>
                         <td>@b.Code</td>
+                        <td>@b.Datum</td>
+                        <td>@b.Uhrzeit</td>
                         <td>
                             @if (b.Status == "accept")
                             {
                                 <span style="color:green; font-weight:bold;">@b.Status</span>
+                            }
+                            else if (b.Status == "nicht gekommen")
+                            {
+                                <span style="color:red; font-weight:bold;">@b.Status</span>
                             }
                             else
                             {
                                 <span style="color:#0D47A1;">Offen</span>
                             }
                         </td>
+                        <td>
+                            @if (b.Status != "accept")
+                            {
+                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
+                            }
+                            else
+                            {
+                                <em>Abgehakt</em>
+                            }
+                        </td>
                         <td>@b.BearbeitetVon</td>
-                    </tr>
-                }
+                    }
+                </tr>
             }
         </tbody>
     </table>
@@ -132,7 +150,7 @@ else
         public string Klasse { get; set; } = "";
         public string Schueler { get; set; } = "";
         public string Code { get; set; } = "";
-        public string Status { get; set; } = "offen"; // leer = offen
+        public string Status { get; set; } = "offen";
         public string BearbeitetVon { get; set; } = "";
     }
 
@@ -140,10 +158,8 @@ else
     List<Buchung> filteredBuchungen = new();
     string SelectedKategorie = "raum";
     string SearchTerm = "";
-
     string RaumPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
     string WorkshopPath => Path.Combine(Env.ContentRootPath, "Data", "workshops.txt");
-
     private bool jsInitialized = false;
 
     protected override async Task OnInitializedAsync()
@@ -156,8 +172,6 @@ else
 
         LoadBuchungen();
         FilterBuchungen();
-
-        // Navigation auf andere Pages überwachen
         Navigation.LocationChanged += (_, __) => Logout();
     }
 
@@ -166,8 +180,7 @@ else
         if (firstRender && !jsInitialized)
         {
             jsInitialized = true;
-            await JS.InvokeVoidAsync("window.addEventListener", "beforeunload",
-                DotNetObjectReference.Create(this), "LogoutJS");
+            await JS.InvokeVoidAsync("window.addEventListener", "beforeunload", DotNetObjectReference.Create(this), "LogoutJS");
         }
     }
 
@@ -188,11 +201,11 @@ else
     {
         buchungen = new List<Buchung>();
         string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
-
         if (!File.Exists(path)) return;
 
         var lines = File.ReadAllLines(path);
-        foreach (var line in lines)
+
+        foreach (var line in lines.Reverse())
         {
             if (string.IsNullOrWhiteSpace(line)) continue;
             var parts = line.Split(';');
@@ -210,52 +223,88 @@ else
                         Schueler = parts[3].Trim(),
                         Code = parts[4].Trim(),
                         Status = status,
-                        BearbeitetVon = parts.Length > 6 ? parts[6].Trim() : ""
+                        BearbeitetVon = parts.Length > 5 ? parts[5].Trim() : ""
                     });
             }
             else
             {
-                if (parts.Length < 4) continue;
-                string status = parts.Length > 4 && !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "offen";
+                if (parts.Length < 5) continue;
+
+                string schueler = parts[0].Trim();
+                string klasse = parts[1].Trim();
+                string code = parts[2].Trim();
+
+                // Datum + Uhrzeit
+                string datum = "";
+                string uhrzeit = "";
+                if (!string.IsNullOrWhiteSpace(parts[3]))
+                {
+                    var dtParts = parts[3].Trim().Split(' ');
+                    datum = dtParts.Length > 0 ? dtParts[0] : "";
+                    uhrzeit = dtParts.Length > 1 ? dtParts[1] : "00:00";
+                }
+
+                // Status aus parts[4]
+                string status = !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "offen";
+
+                // BearbeitetVon
+                string bearbeitetVon = parts.Length > 5 ? parts[5].Trim() : "";
 
                 buchungen.Add(new Buchung
                     {
-                        Uhrzeit = parts[0].Trim(),
-                        Schueler = parts[1].Trim(),
-                        Klasse = parts[2].Trim(),
-                        Code = parts[3].Trim(),
+                        Schueler = schueler,
+                        Klasse = klasse,
+                        Code = code,
+                        Datum = datum,
+                        Uhrzeit = uhrzeit,
                         Status = status,
-                        BearbeitetVon = parts.Length > 5 ? parts[5].Trim() : ""
+                        BearbeitetVon = bearbeitetVon
                     });
             }
         }
+
+        // Alte Buchungen auf "nicht gekommen" setzen
+        var now = DateTime.Now;
+        foreach (var b in buchungen)
+        {
+            if (DateTime.TryParseExact(b.Datum, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var d) ||
+                DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out d))
+            {
+                DateTime bookingDateTime = d;
+                if (TimeSpan.TryParse(b.Uhrzeit, out var t))
+                    bookingDateTime = bookingDateTime.Date + t;
+                else
+                    bookingDateTime = bookingDateTime.Date.AddHours(23).AddMinutes(59);
+
+                if (bookingDateTime < now && b.Status != "accept")
+                    b.Status = "nicht gekommen";
+            }
+        }
+
         FilterBuchungen();
     }
 
     void FilterBuchungen()
     {
         if (string.IsNullOrWhiteSpace(SearchTerm))
-        {
             filteredBuchungen = buchungen;
-        }
         else
-        {
             filteredBuchungen = buchungen
-                .Where(b =>
-                    b.Schueler.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    b.Klasse.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    b.Code.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
+                .Where(b => b.Schueler.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)
+                         || b.Klasse.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)
+                         || b.Code.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
-        }
     }
 
     void SaveBuchungen()
     {
         string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
+
         var lines = SelectedKategorie == "raum"
             ? buchungen.Select(b => $"{b.Datum};{b.Uhrzeit};{b.Klasse};{b.Schueler};{b.Code};{b.Status};{b.BearbeitetVon}")
-            : buchungen.Select(b => $"{b.Uhrzeit};{b.Schueler};{b.Klasse};{b.Code};{b.Status};{b.BearbeitetVon}");
-        File.WriteAllLines(path, lines);
+            : buchungen.Select(b => $"{b.Schueler};{b.Klasse};{b.Code};{b.Datum} {b.Uhrzeit};{b.Status};{b.BearbeitetVon}");
+
+        File.WriteAllLines(path, lines.Reverse());
     }
 
     async Task MarkAcceptAsync(Buchung b)
@@ -281,6 +330,7 @@ else
     {
         string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
         await BackupService.BackupFileAsync(path, path);
+
         if (GitHubUploader != null)
         {
             await GitHubUploader.UploadOrUpdateFileAsync(
