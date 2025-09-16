@@ -1,5 +1,5 @@
-John;9c;Podcast;;;Admin;
-Klaas;9c;Podcast;;;Admin;
+John;9c;Podcast;;;accept;Admin
+Klaas;9c;Podcast;;;accept;Admin
 Leonie;9c;Podcast;;;accept;Admin
 Jonas Gohr;9c;Davinci;;;accept;Admin
 Jonas;9c;Davinci;;;accept;Admin
