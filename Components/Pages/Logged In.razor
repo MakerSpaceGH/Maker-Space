@@ -1,4 +1,4 @@
-@page "/LoggedIn"
+﻿@page "/LoggedIn"
 @using My_own_website.Services
 @using System.Globalization
 @inject LoginManager LoginService
@@ -214,7 +214,6 @@ else
             {
                 if (parts.Length < 5) continue;
                 string status = parts.Length > 5 && !string.IsNullOrWhiteSpace(parts[5]) ? parts[5].Trim() : "offen";
-
                 buchungen.Add(new Buchung
                     {
                         Datum = parts[0].Trim(),
@@ -223,18 +222,12 @@ else
                         Schueler = parts[3].Trim(),
                         Code = parts[4].Trim(),
                         Status = status,
-                        BearbeitetVon = parts.Length > 5 ? parts[5].Trim() : ""
+                        BearbeitetVon = parts.Length > 6 ? parts[6].Trim() : ""
                     });
             }
             else
             {
                 if (parts.Length < 5) continue;
-
-                string schueler = parts[0].Trim();
-                string klasse = parts[1].Trim();
-                string code = parts[2].Trim();
-
-                // Datum + Uhrzeit
                 string datum = "";
                 string uhrzeit = "";
                 if (!string.IsNullOrWhiteSpace(parts[3]))
@@ -244,40 +237,19 @@ else
                     uhrzeit = dtParts.Length > 1 ? dtParts[1] : "00:00";
                 }
 
-                // Status aus parts[4]
                 string status = !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "offen";
-
-                // BearbeitetVon
                 string bearbeitetVon = parts.Length > 5 ? parts[5].Trim() : "";
 
                 buchungen.Add(new Buchung
                     {
-                        Schueler = schueler,
-                        Klasse = klasse,
-                        Code = code,
+                        Schueler = parts[0].Trim(),
+                        Klasse = parts[1].Trim(),
+                        Code = parts[2].Trim(),
                         Datum = datum,
                         Uhrzeit = uhrzeit,
                         Status = status,
                         BearbeitetVon = bearbeitetVon
                     });
-            }
-        }
-
-        // Alte Buchungen auf "nicht gekommen" setzen
-        var now = DateTime.Now;
-        foreach (var b in buchungen)
-        {
-            if (DateTime.TryParseExact(b.Datum, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var d) ||
-                DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out d))
-            {
-                DateTime bookingDateTime = d;
-                if (TimeSpan.TryParse(b.Uhrzeit, out var t))
-                    bookingDateTime = bookingDateTime.Date + t;
-                else
-                    bookingDateTime = bookingDateTime.Date.AddHours(23).AddMinutes(59);
-
-                if (bookingDateTime < now && b.Status != "accept")
-                    b.Status = "nicht gekommen";
             }
         }
 
@@ -319,7 +291,8 @@ else
 
     async Task MarkNotComeAsync(Buchung b)
     {
-        buchungen.Remove(b);
+        b.Status = "nicht gekommen";
+        b.BearbeitetVon = LoginService.CurrentUsername;
         SaveBuchungen();
         await BackupAndGitHubUpload();
         FilterBuchungen();
@@ -355,7 +328,8 @@ else
         if (LoginService.IsLoggedIn)
         {
             LoginService.Logout();
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/", true); // forceLoad = true → Seite komplett neu laden
         }
     }
+
 }

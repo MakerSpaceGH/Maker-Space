@@ -3,8 +3,6 @@
 @inject IWebHostEnvironment Env
 @inject GitHubUploader GitHubUploader
 @rendermode InteractiveServer
-@using System.Globalization;
-
 
 <h3 style="color: #0d6efd;">Buchung Maker Space</h3>
 
@@ -100,8 +98,8 @@
 
     private Dictionary<string, string> klasseCodes = new();
 
-   private string BuchungenPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
-   private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassencodes.txt");
+    private string BuchungenPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
+    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassenCodes.txt");
 
     protected override void OnInitialized()
     {
@@ -177,14 +175,12 @@
             meldung = "Einige Schülernamen sind doppelt. Bitte unterschiedliche Namen eintragen.";
             return;
         }
-      
 
-        if (!DateTime.TryParse(Datum, CultureInfo.GetCultureInfo("de-DE"), DateTimeStyles.None, out var parsedDatum))
+        if (!DateTime.TryParse(Datum, out var parsedDatum))
         {
-          meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
-          return;
+            meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
+            return;
         }
-
 
         if (!TimeSpan.TryParse(Uhrzeit, out var parsedUhrzeit))
         {
@@ -282,10 +278,3 @@
         }
     }
 }
-
-
-
-
-
-
-
