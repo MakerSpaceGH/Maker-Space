@@ -12,6 +12,9 @@ builder.Services.AddSingleton<GitHubUploader>();
 
 builder.Services.AddScoped<BackupService>();
 
+builder.Services.AddScoped<My_own_website.Services.TimeService>();
+builder.Services.AddHttpClient<My_own_website.Services.TimeService>();
+
 builder.Services.AddSingleton<LoginManager>(sp =>
 {
     var env = sp.GetRequiredService<IWebHostEnvironment>();
@@ -63,22 +66,12 @@ if (!File.Exists(workshopStatusPath))
     File.WriteAllText(workshopStatusPath, defaultStatus);
 }
 
-
 var accountsPath = Path.Combine(dataPath, "accounts");
-
 if (!File.Exists(accountsPath))
 {
-    // Alle Standard-Accounts hier eintragen: "Benutzername=Passwort"
-    var defaultAccounts = new[]
-    {
-        "Admin=admin",
-        "Jonas=jonas",
-        // weitere Accounts einfach hier hinzufügen
-    };
-
-    File.WriteAllLines(accountsPath, defaultAccounts);
+    File.WriteAllText(accountsPath, "Admin=admin\n");
+    File.WriteAllText(accountsPath, "Jonas=admin\n");
 }
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -99,5 +92,3 @@ app.MapRazorComponents<App>()
 app.Urls.Add("http://0.0.0.0:80");
 
 app.Run();
-
-
