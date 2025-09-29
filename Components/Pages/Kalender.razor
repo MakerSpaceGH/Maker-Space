@@ -1,4 +1,4 @@
-﻿@page "/kalender"
+@page "/kalender"
 @rendermode InteractiveServer
 
 @using System.Globalization
@@ -168,6 +168,7 @@
                     var start = new DateTime(aktuellerTag.Year, aktuellerTag.Month, aktuellerTag.Day, slotInfo.Stunde, slotInfo.Minute, 0);
                     var end = start.AddMinutes(slotInfo.DauerMin);
 
+                    // Sperre den Slot exakt ab Endzeit
                     bool slotInVergangenheit = aktuelleZeit >= end;
 
                     bool slotBelegt = buchungen.Any(b =>
