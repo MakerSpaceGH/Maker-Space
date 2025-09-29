@@ -4,3 +4,4 @@ Jonas;9c;Davinci;30.10.2025 14:00;accept;Jonas
 Jonas;9c;DaVinci;06.10.2025 00:00;accept;Admin
 Jonas;9c;Podcast;10.10.2025 13:00;accept;Admin
 Jonas;9c;Bildbearbeitung;15.10.2025 13:00;accept;Admin
+Thomas;9c;Davinci;30.10.2025 14:00;;
