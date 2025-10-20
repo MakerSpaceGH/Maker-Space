@@ -99,7 +99,7 @@
     private Dictionary<string, string> klasseCodes = new();
 
     private string BuchungenPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
-    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassencodes.txt");
+    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassenCodes.txt");
 
     protected override void OnInitialized()
     {
@@ -115,7 +115,6 @@
         if (string.IsNullOrWhiteSpace(Uhrzeit) && !string.IsNullOrWhiteSpace(Uhrzeit))
             this.Uhrzeit = Uhrzeit;
     }
-
 
     private void LadeKlasseCodes()
     {
@@ -185,6 +184,14 @@
         if (!TimeSpan.TryParse(Uhrzeit, out var parsedUhrzeit))
         {
             meldung = "Die angegebene Uhrzeit konnte nicht verarbeitet werden.";
+            return;
+        }
+
+        // **Hier prüfen, ob Termin in der Zukunft liegt**
+        var termin = parsedDatum.Date + parsedUhrzeit;
+        if (termin <= DateTime.Now)
+        {
+            meldung = "Dieser Termin liegt in der Vergangenheit.";
             return;
         }
 
@@ -278,6 +285,3 @@
         }
     }
 }
-
-
-

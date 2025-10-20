@@ -8,10 +8,10 @@ namespace My_own_website.Services
     {
         private readonly string _contentRootPath;
 
-        // Session-spezifisch: aktueller Benutzer dieser Instanz
+        // Aktuell eingeloggter Benutzer
         public string CurrentUsername { get; private set; } = "";
 
-        // Global: alle aktuell eingeloggten Benutzer über alle Sessions
+        // Global: alle eingeloggten Benutzer
         private static HashSet<string> LoggedInUsers = new();
 
         public LoginManager(string contentRootPath)
@@ -24,8 +24,8 @@ namespace My_own_website.Services
         /// </summary>
         /// <param name="username">Benutzername</param>
         /// <param name="password">Passwort</param>
-        /// <param name="error">Fehlermeldung falls Login fehlschlägt</param>
-        /// <returns>true, wenn Login erfolgreich, sonst false</returns>
+        /// <param name="error">Fehlermeldung</param>
+        /// <returns>true wenn Login erfolgreich</returns>
         public bool Login(string username, string password, out string error)
         {
             error = "";
@@ -71,14 +71,22 @@ namespace My_own_website.Services
             if (!string.IsNullOrEmpty(CurrentUsername))
             {
                 LoggedInUsers.Remove(CurrentUsername);
+                CurrentUsername = null;
             }
-
-            CurrentUsername = "";
         }
 
         /// <summary>
-        /// Gibt zurück, ob dieser LoginManager aktuell einen Benutzer eingeloggt hat.
+        /// Prüft, ob ein Benutzer aktuell eingeloggt ist.
         /// </summary>
         public bool IsLoggedIn => !string.IsNullOrEmpty(CurrentUsername);
+
+        /// <summary>
+        /// Erzwingt Logout aller Benutzer (für Tests oder Neustart).
+        /// </summary>
+        public void LogoutAll()
+        {
+            LoggedInUsers.Clear();
+            CurrentUsername = null;
+        }
     }
 }

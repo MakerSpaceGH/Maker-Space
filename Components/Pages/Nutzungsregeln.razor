@@ -1,5 +1,228 @@
-﻿<h3>Nutzungsregeln</h3>
-@page "/Nutzungsregeln"
-@code {
+﻿@page "/Nutzungsregeln"
 
-}
+<div class="rules-container">
+    <h1 class="rules-title">📘 Nutzungsregeln des Maker Space</h1>
+
+    <div class="intro-card">
+        <p>
+            Willkommen im <strong>Maker Space</strong>!
+            Damit alle sicher und effektiv arbeiten können, gelten folgende Regeln.
+            Bitte lies sie sorgfältig durch und halte dich daran – das sorgt für ein faires und sicheres Miteinander.
+        </p>
+    </div>
+
+    <div class="rules-grid">
+        <div class="rule-card">
+            <h3>1. Sicherheit steht an erster Stelle</h3>
+            <p>
+                Trage bei Bedarf Schutzbrillen, Handschuhe oder Gehörschutz.
+                Achte auf deine Umgebung und melde beschädigte Geräte sofort einem Betreuer.
+            </p>
+        </div>
+
+        <div class="rule-card">
+            <h3>2. Geräte nur nach Einweisung benutzen</h3>
+            <p>
+                Maschinen wie 3D-Drucker, Lasercutter oder CNC dürfen nur nach einer Einweisung verwendet werden.
+                Nutze nur Geräte, bei denen du dich sicher fühlst.
+            </p>
+        </div>
+
+        <div class="rule-card">
+            <h3>3. Ordnung und Sauberkeit</h3>
+            <p>
+                Hinterlasse deinen Arbeitsplatz immer sauber und ordentlich.
+                Entferne Reste, Materialien und Abfälle direkt nach der Nutzung.
+            </p>
+        </div>
+
+        <div class="rule-card">
+            <h3>4. Respekt und Rücksicht</h3>
+            <p>
+                Behandle andere Nutzer, das Inventar und die Technik mit Respekt.
+                Rücksicht auf Geräuschpegel und gegenseitige Hilfe sind selbstverständlich.
+            </p>
+        </div>
+
+        <div class="rule-card">
+            <h3>5. Verantwortung für eigene Projekte</h3>
+            <p>
+                Du bist für dein Projekt selbst verantwortlich.
+                Sichere regelmäßig deine Daten und prüfe Materialien auf Sicherheit und Eignung.
+            </p>
+        </div>
+
+        <div class="rule-card">
+            <h3>6. Datensicherheit</h3>
+            <p>
+                Speichere keine persönlichen oder sensiblen Daten auf öffentlichen Geräten.
+                Verwende nach Möglichkeit USB-Sticks oder Cloudspeicher.
+            </p>
+        </div>
+
+        <div class="rule-card">
+            <h3>7. Buchungen und Zeitmanagement</h3>
+            <p>
+                Respektiere gebuchte Zeiten und Räume anderer Gruppen.
+                Pünktliches Erscheinen und Verlassen der Räume gehört zum fairen Umgang dazu.
+            </p>
+        </div>
+
+        <div class="rule-card">
+            <h3>8. Kein Essen oder Trinken an den Arbeitsplätzen</h3>
+            <p>Trinken nur in verschließbaren Flaschen erlaubt – Essen bitte außerhalb der Arbeitsbereiche.</p>
+        </div>
+
+        <div class="rule-card">
+            <h3>9. Schäden und Fehlfunktionen sofort melden</h3>
+            <p>Wenn etwas nicht funktioniert oder beschädigt ist, melde es direkt einem Betreuer oder über das Formular im System.</p>
+        </div>
+
+        <div class="rule-card">
+            <h3>10. Verantwortungsbewusste Nutzung</h3>
+            <p>
+                Der Maker Space ist ein Ort für kreative, schulische und technische Projekte.
+                Missbrauch der Geräte (z.B. zum Mining, Gaming oder privaten Zwecken) ist untersagt.
+            </p>
+        </div>
+    </div>
+
+    <div class="thanks-card">
+        <h3>Vielen Dank!</h3>
+        <p>
+            Mit deiner Rücksicht und deinem Engagement trägst du dazu bei,
+            dass der Maker Space ein Ort bleibt, an dem Innovation, Teamwork und Kreativität großgeschrieben werden.
+        </p>
+        <p class="signature">– Dein Maker Space Team 💙</p>
+    </div>
+</div>
+
+<style>
+    .rules-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: linear-gradient(180deg, #f8fbff 0%, #e8f0ff 100%);
+        border-radius: 16px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .rules-title {
+        text-align: center;
+        font-size: 2.3rem;
+        font-weight: 900;
+        color: #0b4ed1;
+        text-shadow: 0 0 10px rgba(11,78,209,0.3);
+        margin-bottom: 2rem;
+        letter-spacing: 0.5px;
+    }
+
+    .intro-card {
+        background: white;
+        border-left: 6px solid #0b4ed1;
+        padding: 1.2rem 1.6rem;
+        border-radius: 10px;
+        margin-bottom: 1.8rem;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        color: #1e3a8a;
+        font-size: 1.05rem;
+    }
+
+    .rules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.4rem;
+    }
+
+    .rule-card {
+        background: white;
+        border: 3px solid #0b4ed1;
+        border-radius: 14px;
+        padding: 1.5rem 1.5rem 1.3rem 1.5rem;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        text-align: left;
+        color: #1e3a8a;
+        flex: 1 1 320px;
+        min-width: 280px;
+        max-width: 380px;
+        overflow: hidden;
+    }
+
+        .rule-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(11,78,209,0.25);
+            border-color: #2563eb;
+        }
+
+        .rule-card h3 {
+            color: #0b4ed1;
+            margin-top: 0;
+            margin-bottom: 0.7rem;
+            font-weight: 800;
+            font-size: 1.3rem;
+            line-height: 1.3;
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+
+        .rule-card p {
+            color: #1f2937;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+    .thanks-card {
+        background: linear-gradient(90deg, #0b4ed1 0%, #468dde 100%);
+        color: white;
+        text-align: center;
+        padding: 1.8rem;
+        border-radius: 12px;
+        margin-top: 2.2rem;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+
+        .thanks-card h3 {
+            font-size: 1.7rem;
+            margin-bottom: 0.6rem;
+            font-weight: 800;
+        }
+
+        .thanks-card p {
+            font-size: 1.05rem;
+        }
+
+    .signature {
+        margin-top: 1rem;
+        font-style: italic;
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    @@media (max-width: 700px) {
+        .rules-container
+
+    {
+        padding: 1.2rem;
+    }
+
+    .rules-title {
+        font-size: 1.8rem;
+    }
+
+    .intro-card {
+        font-size: 0.95rem;
+    }
+
+    .rule-card {
+        padding: 1.2rem;
+    }
+
+        .rule-card h3 {
+            font-size: 1.15rem;
+        }
+
+    }
+</style>

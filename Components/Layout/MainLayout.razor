@@ -1,72 +1,178 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Routing
 
-<div class="page d-flex" style="height:100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-    <div id="sidebar" style="
-        width: 260px;
-        background: linear-gradient(180deg, #0a58ca 0%, #6610f2 100%);
-        color: white;
-        padding: 1.5rem;
-        box-shadow: 4px 0 12px rgba(0,0,0,0.2);
-        position: fixed;
-        height: 100vh;
-        overflow-y: auto;
-        transition: width 0.3s ease;
-    ">
-        <NavMenu />
+<div class="layout-container">
+    <!-- Sidebar (Desktop) -->
+    <div class="sidebar">
+        <nav class="nav-menu">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                    <i class="bi bi-house-door-fill nav-icon"></i>
+                    <span class="nav-text">Home</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="buchung">
+                    <i class="bi bi-plus-square-fill nav-icon"></i>
+                    <span class="nav-text">Buchen</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="kalender">
+                    <i class="bi bi-calendar-event nav-icon"></i>
+                    <span class="nav-text">Kalender</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="Workshops">
+                    <i class="bi bi-people-fill nav-icon"></i>
+                    <span class="nav-text">Workshops</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="Über Uns">
+                    <i class="bi bi-info-circle-fill nav-icon"></i>
+                    <span class="nav-text">Über Uns</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="Nutzungsregeln">
+                    <i class="bi bi-journal-text nav-icon"></i>
+                    <span class="nav-text">Nutzungsregeln</span>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="Kontakte">
+                    <i class="bi bi-telephone-fill nav-icon"></i>
+                    <span class="nav-text">Kontakte</span>
+                </NavLink>
+            </div>
+        </nav>
     </div>
 
-    <main style="flex-grow:1; display:flex; flex-direction:column; margin-left: 260px; transition: margin-left 0.3s ease;">
-        <div class="topbar">
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
             <div class="makerspace-header">Maker Space</div>
-            <div class="login-wrapper">
+            <div class="topbar-buttons">
                 <LoginDropdown />
+                <BurgerMenu /> <!-- Button und Dropdown werden in der Komponente erzeugt -->
             </div>
-        </div>
+        </header>
 
-        <article style="padding:1rem; flex-grow:1; overflow:auto;">
+        <article class="content-body">
             @Body
         </article>
     </main>
 </div>
 
 <style>
-    .topbar {
-        background: linear-gradient(90deg, #0a58ca 0%, #6610f2 100%);
+    .layout-container {
+        display: flex;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f6f7fb;
+    }
+
+    /* Sidebar Desktop */
+    .sidebar {
+        background: linear-gradient(90deg, #093a9e 0%, #0b4ed1 100%) !important; /* gleiche Farbe wie Topbar */
         color: white;
-        height: 70px;
-        min-height: 70px;
-        max-height: 70px;
+        width: 260px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.18);
+        padding-top: 1rem;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0;
+    }
+
+    .nav-item {
+        padding: 0.2rem 1rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 0.6rem 0.9rem;
+        transition: background-color 0.2s ease;
+    }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255,255,255,0.15);
+        }
+
+    .nav-icon {
+        font-size: 1.4rem;
+        margin-right: 0.75rem;
+    }
+
+    .nav-text {
+        display: inline-block;
+    }
+
+    /* Topbar */
+    .topbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 1.5rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        position: relative;
-        user-select: none;
+        height: 70px;
+        padding: 0 1rem;
+        background: linear-gradient(90deg, #093a9e 0%, #0b4ed1 100%);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    .topbar-buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .makerspace-header {
-        font-weight: 1000;
-        font-size: 2.5rem;
-        color: white;
-        user-select: none;
-        text-shadow: 0 0 8px rgba(255,255,255,0.5);
+        font-weight: 900;
+        font-size: 1.6rem;
+        text-shadow: 0 0 6px rgba(255,255,255,0.25);
     }
 
-    .login-wrapper {
-        min-width: 150px;
-        max-width: 220px; /* Maximale Breite */
-        width: auto;
-        display: flex;
-        justify-content: flex-end;
-        flex-shrink: 0;
+    /* Main Content */
+    .main-content {
+        flex: 1;
     }
 
-        /* Optional: Falls der LoginDropdown ein Button ist, kann man den max-width einschränken */
-        .login-wrapper button {
-            max-width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+    .content-body {
+        padding: 1rem;
+        flex: 1;
+        overflow: auto;
+    }
+
+    /* Mobile Anpassung */
+    @@media (max-width: 800px) {
+        .sidebar {
+            display: none;
         }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        .makerspace-header {
+            display: block; /* Makerspace-Header auch auf Mobile sichtbar */
+        }
+    }
 </style>

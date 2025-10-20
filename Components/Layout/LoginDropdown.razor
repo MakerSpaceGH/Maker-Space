@@ -12,18 +12,21 @@
 
 @if (ShowDropdown)
 {
-    <div class="dropdown-panel" role="menu">
-        <h5 class="dropdown-title">Login</h5>
+    <!-- Overlay für Klick außerhalb -->
+    <div class="login-dropdown-overlay" @onclick="ToggleDropdown">
+        <div class="dropdown-panel" @onclick:stopPropagation>
+            <h5 class="dropdown-title">Login</h5>
 
-        <input placeholder="Benutzername" @bind="Username" class="login-input" />
-        <input type="password" placeholder="Passwort" @bind="Password" class="login-input" />
+            <input placeholder="Benutzername" @bind="Username" class="login-input" />
+            <input type="password" placeholder="Passwort" @bind="Password" class="login-input" />
 
-        <button @onclick="HandleLogin" class="login-submit">Anmelden</button>
+            <button @onclick="HandleLogin" class="login-submit">Anmelden</button>
 
-        @if (!string.IsNullOrEmpty(LoginMessage))
-        {
-            <p class="login-error">@LoginMessage</p>
-        }
+            @if (!string.IsNullOrEmpty(LoginMessage))
+            {
+                <p class="login-error">@LoginMessage</p>
+            }
+        </div>
     </div>
 }
 
@@ -34,10 +37,10 @@
         user-select: none;
         display: inline-flex;
         align-items: center;
-        background: linear-gradient(90deg, #6610f2 0%, #0a58ca 100%);
+        background: linear-gradient(90deg, #0d6efd 0%, #0a58ca 100%);
         padding: 6px 12px;
         border-radius: 20px;
-        box-shadow: 0 3px 8px rgba(102,16,242,0.7);
+        box-shadow: 0 3px 8px rgba(13,110,253,0.7);
         transition: background 0.3s ease;
         font-size: 0.9rem;
         border: none;
@@ -45,25 +48,34 @@
     }
 
         .login-btn:hover {
-            background: linear-gradient(90deg, #0a58ca 0%, #6610f2 100%);
+            background: linear-gradient(90deg, #0a58ca 0%, #0d6efd 100%);
             box-shadow: 0 5px 12px rgba(13,110,253,0.85);
             color: white;
         }
 
+    /* Overlay, damit Klicks außerhalb das Dropdown schließen */
+    .login-dropdown-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.2);
+        z-index: 9999; /* liegt über Sidebar und allem anderen */
+        display: flex;
+        justify-content: flex-end; /* rechts oben */
+        align-items: flex-start;
+    }
+
     .dropdown-panel {
-        position: absolute;
-        top: 70px;
-        right: 20px;
+        margin: 70px 20px 0 0; /* Abstand von Topbar und rechts */
+        width: 280px;
         background: white;
         border-radius: 12px;
         box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         padding: 1.5rem;
-        width: 280px;
-        z-index: 1000;
+        z-index: 10000;
     }
 
     .dropdown-title {
-        color: #6610f2;
+        color: #0a58ca;
         margin-bottom: 1rem;
         font-weight: 700;
         text-align: center;
@@ -119,7 +131,6 @@
     {
         try
         {
-            // Nutzt jetzt LoginManager mit Fehlerausgabe
             bool loginErfolgreich = loginService.Login(Username, Password, out string errorMessage);
 
             if (loginErfolgreich)

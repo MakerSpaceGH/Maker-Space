@@ -1,5 +1,230 @@
-﻿<h3>Über Uns</h3>
-@page "/Über Uns"
-@code {
+﻿@page "/Über uns"
+@rendermode InteractiveServer
 
+<div class="about-container">
+    <h1 class="about-title">Unsere Abteilungen</h1>
+
+    <div class="machine-grid">
+        @foreach (var m in MachineList)
+        {
+            <div class="machine-card" @onclick="() => ShowMachinePopup(m)">
+                <img src="@m.Image" alt="@m.Title" class="machine-image" />
+                <h3>@m.Title</h3>
+            </div>
+        }
+    </div>
+</div>
+
+@if (ShowPopup && SelectedMachine != null)
+{
+    <div class="popup-overlay" @onclick="CloseMachinePopup">
+        <div class="popup-content" @onclick:stopPropagation="true">
+            <h2>@SelectedMachine.Title</h2>
+            <img src="@SelectedMachine.Image" class="popup-image" />
+            <p>@SelectedMachine.Description</p>
+            <button class="close-btn" @onclick="CloseMachinePopup">Schließen</button>
+        </div>
+    </div>
 }
+
+@code {
+    private class MachineModel
+    {
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Image { get; set; } = "";
+    }
+
+    private List<MachineModel> MachineList = new()
+    {
+        new MachineModel
+        {
+            Title = "Wir!",
+            Description = "Der Maker Space bietet euch die Möglichkeit, Projekte für die Schule noch effizienter umzusetzen und dabei auf modernste High-End-Technik zurückzugreifen. Ganz egal, ob ihr an kreativen, technischen oder multimedialen Projekten arbeitet – hier könnt ihr eure Ideen professionell verwirklichen. Unser Ziel: euch Raum geben, um Innovation erlebbar zu machen. Viel Spaß und Erfolg wünscht euch das gesamte Maker Space Team!",
+            Image = "images/logo.jpg"
+        },
+        new MachineModel
+        {
+            Title = "High-End PC",
+            Description = "Unser selbstgebauter High-End-PC wurde speziell für kreative Anwendungen konzipiert. Mit einer leistungsstarken Grafikkarte, blitzschnellem Prozessor und viel RAM ermöglicht er reibungslose Arbeit in Programmen wie DaVinci Resolve, Blender oder Fusion. Ideal für Videobearbeitung, 3D-Design, Rendering oder Softwareentwicklung – ein echtes Kraftpaket für eure Projekte!",
+            Image = "images/gamingpc.jpg"
+        },
+        new MachineModel
+        {
+            Title = "Apple Macs",
+            Description = "Unsere Apple Macs stehen für Effizienz und Design. Ob Grafikprojekte, Videoproduktion oder Musikbearbeitung – macOS bietet die perfekte Plattform für kreative Köpfe. Mit gestochen scharfen Displays und Top-Leistung erlebt ihr professionelles Arbeiten auf höchstem Niveau.",
+            Image = "images/applemacs.jpg"
+        },
+        new MachineModel
+        {
+            Title = "Plakatdrucker",
+            Description = "Mit unserem Großformatdrucker könnt ihr Poster, Banner und Präsentationen in brillanter Qualität erstellen. Ideal für Schulprojekte, Ausstellungen oder Events – eure Ideen kommen hier ganz groß raus!",
+            Image = "images/plakatdrucker.jpg"
+        },
+        new MachineModel
+        {
+            Title = "Snapmaker Artisan",
+            Description = "Der Snapmaker Artisan vereint 3D-Druck, Lasergravur und CNC-Fräsen in einer Maschine. Perfekt für Prototyping, kreative Bastelprojekte und präzise Handwerksarbeiten. Hier wird euer digitales Design Realität!",
+            Image = "images/snapmaker.jpg"
+        },
+        new MachineModel
+        {
+            Title = "3D-Drucker",
+            Description = "Unser 3D-Drucker ermöglicht euch, eigene Modelle, Ersatzteile oder Designideen als physische Objekte umzusetzen. Perfekt für Technik, Kunst oder kreative Experimente – einfach modellieren, drucken, staunen!",
+            Image = "images/3ddrucker.jpg"
+        },
+        new MachineModel
+        {
+            Title = "Podcast-Studio",
+            Description = "Im Podcast-Studio erwarten euch professionelle Mikrofone, Akustikdämmung und ein voll ausgestattetes Mischpult. Ideal für Interviews, Podcasts oder Voice-Over-Aufnahmen – hier klingt jede Stimme großartig.",
+            Image = "images/podcaststudio.jpg"
+        }
+    };
+
+    private MachineModel? SelectedMachine;
+    private bool ShowPopup = false;
+
+    private void ShowMachinePopup(MachineModel machine)
+    {
+        SelectedMachine = machine;
+        ShowPopup = true;
+    }
+
+    private void CloseMachinePopup()
+    {
+        ShowPopup = false;
+        SelectedMachine = null;
+    }
+}
+
+<style>
+    .about-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: linear-gradient(180deg, #f8fbff 0%, #e8f0ff 100%);
+        border-radius: 20px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+
+    .about-title {
+        text-align: center;
+        font-size: 2.6rem;
+        font-weight: 900;
+        color: #0b4ed1;
+        text-shadow: 0 0 10px rgba(11,78,209,0.25);
+        margin-bottom: 2.5rem;
+    }
+
+    .machine-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .machine-card {
+        background: white;
+        border: 3px solid #0b4ed1;
+        border-radius: 16px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+        .machine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 22px rgba(11,78,209,0.2);
+        }
+
+        .machine-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+        }
+
+        .machine-card h3 {
+            color: #0b4ed1;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+    /* ==== Popup ==== */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .popup-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        max-width: 600px;
+        width: 90%;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        text-align: center;
+        border: 3px solid #0b4ed1;
+    }
+
+        .popup-content h2 {
+            color: #0b4ed1;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+    .popup-image {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .popup-content p {
+        color: #333;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .close-btn {
+        background: linear-gradient(90deg, #0b4ed1 0%, #468dde 100%);
+        color: white;
+        padding: 0.75rem 1.8rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+    }
+
+        .close-btn:hover {
+            opacity: 0.85;
+        }
+
+    @@media (max-width: 700px) {
+        .about-title
+
+    {
+        font-size: 2rem;
+    }
+
+    .popup-image {
+        height: 200px;
+    }
+
+    }
+</style>

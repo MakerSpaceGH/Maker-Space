@@ -1,75 +1,146 @@
 ﻿@inherits LayoutComponentBase
-@code {
-    [CascadingParameter] public bool isSmallScreen { get; set; }
-}
+@rendermode InteractiveServer
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav-menu">
-        <div class="nav-item">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <i class="bi bi-house-door-fill nav-icon"></i>
-                <span class="nav-text">Home</span>
-            </NavLink>
+<div class="layout-container">
+    <!-- Sidebar -->
+    <div class="sidebar @SidebarClass">
+        <div class="sidebar-header">
+            <span class="brand-title">Maker Space</span>
+            <!-- Burger nur auf Mobile -->
+            <button class="burger mobile-only" @onclick="ToggleSidebar" aria-label="Toggle menu">☰</button>
         </div>
 
-        <div class="nav-item">
-            <NavLink class="nav-link" href="buchung">
-                <i class="bi bi-plus-square-fill nav-icon"></i>
-                <span class="nav-text">Buchen</span>
-            </NavLink>
-        </div>
+        <div class="nav-scrollable">
+            <nav class="nav-menu">
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                        <i class="bi bi-house-door-fill nav-icon"></i>
+                        <span class="nav-text">Home</span>
+                    </NavLink>
+                </div>
 
-        <div class="nav-item">
-            <NavLink class="nav-link" href="kalender">
-                <i class="bi bi-calendar-event nav-icon"></i>
-                <span class="nav-text">Kalender</span>
-            </NavLink>
-        </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="buchung">
+                        <i class="bi bi-plus-square-fill nav-icon"></i>
+                        <span class="nav-text">Buchen</span>
+                    </NavLink>
+                </div>
 
-        <div class="nav-item">
-            <NavLink class="nav-link" href="Workshops">
-                <i class="bi bi-people-fill nav-icon"></i>
-                <span class="nav-text">Workshops</span>
-            </NavLink>
-        </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="kalender">
+                        <i class="bi bi-calendar-event nav-icon"></i>
+                        <span class="nav-text">Kalender</span>
+                    </NavLink>
+                </div>
 
-        <div class="nav-item">
-            <NavLink class="nav-link" href="Über Uns">
-                <i class="bi bi-info-circle-fill nav-icon"></i>
-                <span class="nav-text">Über Uns</span>
-            </NavLink>
-        </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="Workshops">
+                        <i class="bi bi-people-fill nav-icon"></i>
+                        <span class="nav-text">Workshops</span>
+                    </NavLink>
+                </div>
 
-        <div class="nav-item">
-            <NavLink class="nav-link" href="Nutzungsregeln">
-                <i class="bi bi-journal-text nav-icon"></i>
-                <span class="nav-text">Nutzungsregeln</span>
-            </NavLink>
-        </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="Über Uns">
+                        <i class="bi bi-info-circle-fill nav-icon"></i>
+                        <span class="nav-text">Über Uns</span>
+                    </NavLink>
+                </div>
 
-        <div class="nav-item">
-            <NavLink class="nav-link" href="Kontakte">
-                <i class="bi bi-telephone-fill nav-icon"></i>
-                <span class="nav-text">Kontakte</span>
-            </NavLink>
-        </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="Nutzungsregeln">
+                        <i class="bi bi-journal-text nav-icon"></i>
+                        <span class="nav-text">Nutzungsregeln</span>
+                    </NavLink>
+                </div>
 
-        @if (isSmallScreen)
-        {
-            <div class="nav-item mt-3">
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="Kontakte">
+                        <i class="bi bi-telephone-fill nav-icon"></i>
+                        <span class="nav-text">Kontakte</span>
+                    </NavLink>
+                </div>
+
+                @if (isSmallScreen)
+                {
+                    <div class="nav-item mt-3">
+                        <LoginDropdown />
+                    </div>
+                }
+            </nav>
+        </div>
+    </div>
+
+    <!-- Overlay für Mobile -->
+    <div class="@OverlayClass" @onclick="CloseSidebar"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <button class="burger mobile-only" @onclick="ToggleSidebar" aria-label="Open menu">☰</button>
+            <div class="makerspace-header desktop-only">Maker Space</div>
+            <div class="login-wrapper">
                 <LoginDropdown />
             </div>
-        }
-    </nav>
+        </header>
+
+        <article class="content-body">
+            @Body
+        </article>
+    </main>
 </div>
 
+@code {
+    [CascadingParameter] public bool isSmallScreen { get; set; }
+
+    private bool sidebarOpen = false;
+
+    private void ToggleSidebar() => sidebarOpen = !sidebarOpen;
+    private void CloseSidebar() => sidebarOpen = false;
+
+    private string SidebarClass => sidebarOpen ? "open" : "closed";
+    private string OverlayClass => sidebarOpen ? "overlay show" : "overlay";
+}
+
 <style>
-    .navbar-toggler {
-        display: none;
+    /* ====== Grundlayout ====== */
+    .layout-container {
+        display: flex;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f6f7fb;
     }
 
+    /* ====== Sidebar ====== */
+    .sidebar {
+        background: linear-gradient(180deg, #0a58ca 0%, #6610f2 100%);
+        color: white;
+        width: 260px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        transition: transform 0.25s ease;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.18);
+    }
+
+    .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+        position: sticky;
+        top: 0;
+        z-index: 3;
+    }
+
+    .brand-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* ====== Nav ====== */
     .nav-scrollable {
         display: flex;
         flex-direction: column;
@@ -97,7 +168,6 @@
         border-radius: 8px;
         padding: 0.6rem 0.9rem;
         transition: background-color 0.2s ease;
-        line-height: 1.2;
     }
 
         .nav-link:hover,
@@ -108,13 +178,121 @@
     .nav-icon {
         font-size: 1.4rem;
         margin-right: 0.75rem;
-        vertical-align: middle;
-        line-height: 1;
-        display: inline-block;
     }
 
     .nav-text {
         display: inline-block;
-        vertical-align: middle;
+    }
+
+    /* ====== Overlay ====== */
+    .overlay {
+        display: none;
+    }
+
+    @@media (max-width: 800px) {
+        /* Sidebar mobile */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 260px;
+            transform: translateX(-100%);
+            z-index: 100;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+        }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar.closed {
+                transform: translateX(-100%);
+            }
+        /* Overlay mobile */
+        .overlay {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+            .overlay.show {
+                opacity: 1;
+                pointer-events: all;
+            }
+        /* Burger sichtbar auf Mobile */
+        .mobile-only {
+            display: inline-block;
+        }
+
+        .desktop-only {
+            display: none;
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+    }
+
+    /* ====== Topbar ====== */
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 70px;
+        padding: 0 1rem;
+        background: linear-gradient(90deg, #0a58ca 0%, #6610f2 100%);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    .makerspace-header {
+        font-weight: 900;
+        font-size: 1.6rem;
+        text-shadow: 0 0 6px rgba(255,255,255,0.25);
+    }
+
+    .login-wrapper {
+        min-width: 120px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* ====== Buttons ====== */
+    .burger {
+        background: rgba(255,255,255,0.12);
+        border: none;
+        color: white;
+        padding: 0.4rem 0.7rem;
+        border-radius: 6px;
+        font-size: 1.05rem;
+        cursor: pointer;
+    }
+
+        .burger:hover {
+            background: rgba(255,255,255,0.18);
+        }
+
+    /* ====== Responsive small screens ====== */
+    @@media (max-width: 420px) {
+        .sidebar {
+            width: 210px;
+        }
+
+        .brand-title {
+            font-size: 1rem;
+        }
+
+        .makerspace-header {
+            font-size: 1.2rem;
+        }
     }
 </style>

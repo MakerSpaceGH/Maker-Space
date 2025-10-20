@@ -8,14 +8,21 @@
 <div class="max-w-7xl mx-auto px-6">
     <!-- Workshop Karten -->
     <div class="workshop-container">
-        @foreach (var w in WorkshopList.Where(w => w.IsAvailable && w.Date.Date >= DateTime.Today))
+        @foreach (var w in WorkshopList)
         {
-            <div class="workshop-card">
+            <div class="workshop-card @(w.Date.Date < DateTime.Today || !w.IsAvailable ? "disabled" : "")"
+                 @onclick="@(w.Date.Date >= DateTime.Today && w.IsAvailable ? (() => ShowWorkshopPopup(w)) : null)">
                 <img src="@w.Image" alt="@w.Title" class="workshop-image" />
                 <h4>@w.Title</h4>
                 <p>@w.Description</p>
                 <p class="date">Termin: @w.Date.ToString("dd.MM.yyyy HH:mm")</p>
-                <p class="slots">@w.AvailableSlots/4 Plätze frei</p>
+
+                <!-- Ladebar Plätze -->
+                <div class="slots-bar">
+                    <div class="slots-fill" style="width:@((4 - w.AvailableSlots) * 25)%">
+                        <span>@(4 - w.AvailableSlots)/4</span>
+                    </div>
+                </div>
             </div>
         }
     </div>
@@ -43,9 +50,9 @@
             <label for="workshopselect">Workshop auswählen</label>
             <select id="workshopselect" @bind="SelectedWorkshop">
                 <option value="">-- Bitte wählen --</option>
-                @foreach (var w in WorkshopList.Where(w => w.IsAvailable && w.Date.Date >= DateTime.Today))
+                @foreach (var w in WorkshopList.Where(w => w.IsAvailable && w.AvailableSlots > 0 && w.Date.Date >= DateTime.Today))
                 {
-                    <option value="@w.Title">@w.Title (@w.AvailableSlots/4 Plätze frei)</option>
+                    <option value="@w.Title">@w.Title (@(4 - w.AvailableSlots)/4 Plätze frei)</option>
                 }
             </select>
         </div>
@@ -62,6 +69,27 @@
         }
     </div>
 </div>
+
+<!-- Popup -->
+@if (ShowPopup && SelectedWorkshopPopup != null)
+{
+    <div class="popup-overlay" @onclick="CloseWorkshopPopup">
+        <div class="popup-content" @onclick:stopPropagation="true">
+            <h2>@SelectedWorkshopPopup.Title</h2>
+            <img src="@SelectedWorkshopPopup.Image" style="max-width:100%;border-radius:8px;" />
+            <p>@SelectedWorkshopPopup.Description</p>
+            <p class="popup-date">Termin: <strong>@SelectedWorkshopPopup.Date.ToString("dd.MM.yyyy HH:mm")</strong></p>
+
+            <div class="slots-bar">
+                <div class="slots-fill" style="width:@((4 - SelectedWorkshopPopup.AvailableSlots) * 25)%">
+                    <span>@(4 - SelectedWorkshopPopup.AvailableSlots)/4</span>
+                </div>
+            </div>
+
+            <button @onclick="CloseWorkshopPopup">Schließen</button>
+        </div>
+    </div>
+}
 
 @code {
     private class WorkshopModel
@@ -89,6 +117,9 @@
     private string SelectedWorkshop = "";
     private string? ErrorMessage;
     private string? SuccessMessage;
+
+    private WorkshopModel? SelectedWorkshopPopup;
+    private bool ShowPopup = false;
 
     private Dictionary<string, string> Klassencodes = new();
 
@@ -118,12 +149,7 @@
     private async Task LoadWorkshopStatus()
     {
         var statusPath = Path.Combine(Env.ContentRootPath, "Data", "workshopstatus.txt");
-        if (!File.Exists(statusPath))
-        {
-            foreach (var w in WorkshopList)
-                w.IsAvailable = false;
-            return;
-        }
+        if (!File.Exists(statusPath)) return;
 
         var statusLines = await File.ReadAllLinesAsync(statusPath);
         var statusDict = new Dictionary<string, (bool IsAvailable, DateTime Date)>(StringComparer.OrdinalIgnoreCase);
@@ -167,20 +193,19 @@
             bookings = (await File.ReadAllLinesAsync(filePath))
                         .Skip(1)
                         .Select(l => l.Split(';'))
-                        .Where(p => p.Length >= 5) // Name;Klasse;Workshop;Datum;Status
+                        .Where(p => p.Length >= 5)
                         .ToList();
         }
 
         foreach (var w in WorkshopList)
         {
-            int bookedCount = bookings.Count(b => 
+            int bookedCount = bookings.Count(b =>
                 string.Equals(b[2].Trim(), w.Title, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(b[4].Trim().ToLower(), "accept") &&
                 DateTime.TryParse(b[3].Trim(), out var d) && d.Date == w.Date.Date
             );
 
             w.AvailableSlots = Math.Max(0, 4 - bookedCount);
-            w.IsAvailable = w.IsAvailable && w.AvailableSlots > 0;
         }
     }
 
@@ -220,7 +245,7 @@
 
         if (!File.Exists(filePath))
         {
-            await File.WriteAllTextAsync(filePath, "Name;Klasse;Workshop;Termin;Status;Admin" + Environment.NewLine);
+            await File.WriteAllTextAsync(filePath, "Name;Klasse;Workshop;Datum;Status;Admin" + Environment.NewLine);
         }
 
         var existingBookings = (await File.ReadAllLinesAsync(filePath))
@@ -229,15 +254,12 @@
                                 .Where(parts => parts.Length >= 5)
                                 .ToList();
 
-      
-
         bool alreadyBooked = existingBookings.Any(b =>
          string.Equals(b[0].Trim(), UserName.Trim(), StringComparison.OrdinalIgnoreCase) &&
          string.Equals(b[2].Trim(), SelectedWorkshop.Trim(), StringComparison.OrdinalIgnoreCase) &&
          DateTime.TryParse(b[3].Trim(), out var bookedDate) &&
          bookedDate.Date == workshop.Date.Date
-     
-);
+        );
         if (alreadyBooked)
         {
             ErrorMessage = "Du hast diesen Workshop bereits gebucht.";
@@ -287,149 +309,220 @@
             Console.WriteLine($"Fehler: {ex.Message}");
         }
     }
+
+    private void ShowWorkshopPopup(WorkshopModel workshop)
+    {
+        SelectedWorkshopPopup = workshop;
+        ShowPopup = true;
+    }
+
+    private void CloseWorkshopPopup()
+    {
+        ShowPopup = false;
+        SelectedWorkshopPopup = null;
+    }
 }
 
 <style>
-.workshop-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 3.5rem;
-}
+    /* Workshop Container */
+    .workshop-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 3.5rem;
+    }
 
-.workshop-card {
-    width: 320px;
-    background: white;
-    border: 4px solid #2563eb;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
+    /* Workshop Card */
+    .workshop-card {
+        width: 320px;
+        background: white;
+        border: 4px solid #2563eb;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
 
-.workshop-card:hover {
-    background-color: #eff6ff;
-}
+        .workshop-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
-.workshop-image {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    border-radius: 12px 12px 0 0;
-    margin-bottom: 0.5rem;
-}
+        .workshop-card:hover:not(.disabled) {
+            background-color: #eff6ff;
+        }
 
-.workshop-card h4 {
-    color: #1e40af;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 0.25rem 0;
-}
+    .workshop-image {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+        margin-bottom: 0.5rem;
+    }
 
-.workshop-card p {
-    color: #374151;
-    font-size: 0.875rem;
-    flex-grow: 1;
-    margin: 0 0 0.5rem 0;
-}
+    .workshop-card h4 {
+        color: #1e40af;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem 0;
+    }
 
-.workshop-card .date {
-    color: #2563eb;
-    font-weight: 600;
-    font-size: 0.875rem;
-}
+    .workshop-card p {
+        color: #374151;
+        font-size: 0.875rem;
+        flex-grow: 1;
+        margin: 0 0 0.5rem 0;
+    }
 
-.workshop-card .slots {
-    color: #16a34a;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
+    .workshop-card .date {
+        color: #2563eb;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
 
-.booking-form {
-    background: white;
-    max-width: 440px;
-    margin: 0 auto 3rem auto;
-    border-radius: 1.5rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border: 1px solid #93c5fd;
-    padding: 2rem;
-}
+    /* Slots Bar */
+    .slots-bar {
+        position: relative;
+        background: white;
+        border: 2px solid #2563eb;
+        border-radius: 8px;
+        height: 24px;
+        width: 100%;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
 
-.booking-form h4 {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #2563eb;
-    margin-bottom: 1.75rem;
-}
+    .slots-fill {
+        background: #2563eb;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: width 0.3s ease;
+    }
 
-.input-group {
-    margin-bottom: 0.75rem;
-}
+        .slots-fill span {
+            color: white;
+            font-weight: bold;
+        }
 
-label {
-    display: block;
-    font-weight: 600;
-    color: #1e40af;
-    margin-bottom: 0.25rem;
-    font-size: 0.95rem;
-}
+    /* Booking Form */
+    .booking-form {
+        background: white;
+        max-width: 440px;
+        margin: 0 auto 3rem auto;
+        border-radius: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border: 1px solid #93c5fd;
+        padding: 2rem;
+    }
 
-input[type="text"],
-input[type="password"],
-select {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #1e40af;
-    border: 2px solid #3b82f6;
-    border-radius: 0.625rem;
-    box-sizing: border-box;
-    transition: border-color 0.25s ease;
-}
+        .booking-form h4 {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 1.75rem;
+        }
 
-input[type="text"]:focus,
-input[type="password"]:focus,
-select:focus {
-    outline: none;
-    border-color: #0d6efd;
-    box-shadow: 0 0 8px rgba(13,110,253,0.5);
-}
+    .input-group {
+        margin-bottom: 0.75rem;
+    }
 
-button {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #0d6efd;
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    border: none;
-    border-radius: 1rem;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: background-color 0.3s ease;
-}
+    label {
+        display: block;
+        font-weight: 600;
+        color: #1e40af;
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
+    }
 
-button:hover {
-    background-color: #0b5ed7;
-}
+    input[type="text"],
+    input[type="password"],
+    select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #1e40af;
+        border: 2px solid #3b82f6;
+        border-radius: 0.625rem;
+        box-sizing: border-box;
+        transition: border-color 0.25s ease;
+    }
 
-.error-message {
-    color: #dc3545;
-    font-weight: 600;
-    margin-top: 1rem;
-    text-align: center;
-}
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13,110,253,0.5);
+        }
 
-.success-message {
-    color: #198754;
-    font-weight: 600;
-    margin-top: 1rem;
-    text-align: center;
-}
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #0d6efd;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        border-radius: 1rem;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+        button:hover {
+            background-color: #0b5ed7;
+        }
+
+    .error-message {
+        color: #dc3545;
+        font-weight: 600;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .success-message {
+        color: #198754;
+        font-weight: 600;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    /* Popup */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .popup-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .popup-date {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #2563eb;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
 </style>

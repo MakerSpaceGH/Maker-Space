@@ -76,24 +76,48 @@ else
                         <td>@b.Schueler</td>
                         <td>@b.Code</td>
                         <td>
-                            @if (b.Status == "accept")
-                            {
-                                <span style="color:green; font-weight:bold;">@b.Status</span>
-                            }
-                            else if (b.Status == "nicht gekommen")
-                            {
-                                <span style="color:red; font-weight:bold;">@b.Status</span>
-                            }
-                            else
-                            {
-                                <span style="color:#0D47A1;">Offen</span>
+                            @{
+                                bool istVergangenheit = false;
+                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum) &&
+                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit))
+                                {
+                                    var termin = parsedDatum.Date + parsedUhrzeit;
+                                    istVergangenheit = termin <= DateTime.Now;
+                                }
+
+                                if (istVergangenheit && b.Status != "accept")
+                                {
+                                    b.Status = "nicht gekommen";
+                                }
+
+                                if (b.Status == "accept")
+                                {
+                                    <span style="color:green; font-weight:bold;">@b.Status</span>
+                                }
+                                else if (b.Status == "nicht gekommen")
+                                {
+                                    <span style="color:red; font-weight:bold;">@b.Status</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#0D47A1;">Offen</span>
+                                }
                             }
                         </td>
                         <td>
                             @if (b.Status != "accept")
                             {
-                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
+                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum2) &&
+                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit2) &&
+                                (parsedDatum2.Date + parsedUhrzeit2) <= DateTime.Now)
+                                {
+                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeletePastBookingAsync(b)">Nicht gekommen</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
+                                }
                             }
                             else
                             {
@@ -110,24 +134,48 @@ else
                         <td>@b.Datum</td>
                         <td>@b.Uhrzeit</td>
                         <td>
-                            @if (b.Status == "accept")
-                            {
-                                <span style="color:green; font-weight:bold;">@b.Status</span>
-                            }
-                            else if (b.Status == "nicht gekommen")
-                            {
-                                <span style="color:red; font-weight:bold;">@b.Status</span>
-                            }
-                            else
-                            {
-                                <span style="color:#0D47A1;">Offen</span>
+                            @{
+                                bool istVergangenheit = false;
+                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum) &&
+                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit))
+                                {
+                                    var termin = parsedDatum.Date + parsedUhrzeit;
+                                    istVergangenheit = termin <= DateTime.Now;
+                                }
+
+                                if (istVergangenheit && b.Status != "accept")
+                                {
+                                    b.Status = "nicht gekommen";
+                                }
+
+                                if (b.Status == "accept")
+                                {
+                                    <span style="color:green; font-weight:bold;">@b.Status</span>
+                                }
+                                else if (b.Status == "nicht gekommen")
+                                {
+                                    <span style="color:red; font-weight:bold;">@b.Status</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#0D47A1;">Offen</span>
+                                }
                             }
                         </td>
                         <td>
                             @if (b.Status != "accept")
                             {
-                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
+                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum2) &&
+                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit2) &&
+                                (parsedDatum2.Date + parsedUhrzeit2) <= DateTime.Now)
+                                {
+                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeletePastBookingAsync(b)">Nicht gekommen</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
+                                }
                             }
                             else
                             {
@@ -291,8 +339,36 @@ else
 
     async Task MarkNotComeAsync(Buchung b)
     {
-        b.Status = "nicht gekommen";
-        b.BearbeitetVon = LoginService.CurrentUsername;
+        // Prüfen, ob Termin in der Vergangenheit liegt
+        bool istVergangenheit = false;
+        if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum) &&
+            TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit))
+        {
+            var termin = parsedDatum.Date + parsedUhrzeit;
+            istVergangenheit = termin <= DateTime.Now;
+        }
+
+        if (!istVergangenheit)
+        {
+            // Normale Buchung → entfernen
+            buchungen.Remove(b);
+        }
+        else
+        {
+            // Vergangene Termine → Status auf "nicht gekommen"
+            b.Status = "nicht gekommen";
+            b.BearbeitetVon = LoginService.CurrentUsername;
+        }
+
+        SaveBuchungen();
+        await BackupAndGitHubUpload();
+        FilterBuchungen();
+        StateHasChanged();
+    }
+
+    async Task DeletePastBookingAsync(Buchung b)
+    {
+        buchungen.Remove(b);
         SaveBuchungen();
         await BackupAndGitHubUpload();
         FilterBuchungen();
@@ -331,5 +407,4 @@ else
             Navigation.NavigateTo("/", true); // forceLoad = true → Seite komplett neu laden
         }
     }
-
 }

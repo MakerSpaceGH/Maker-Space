@@ -1,0 +1,88 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@rendermode InteractiveServer
+<!-- BurgerMenu nur auf Mobile -->
+<div class="burger-menu-container mobile-only">
+    <!-- Button -->
+    <button class="burger-btn" @onclick="ToggleMenu">
+        ☰
+    </button>
+
+    <!-- Dropdown-Menü -->
+    @if (ShowMenu)
+    {
+        <div class="burger-dropdown">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All" @onclick="CloseMenu">Home</NavLink>
+            <NavLink class="nav-link" href="buchung" @onclick="CloseMenu">Buchen</NavLink>
+            <NavLink class="nav-link" href="kalender" @onclick="CloseMenu">Kalender</NavLink>
+            <NavLink class="nav-link" href="Workshops" @onclick="CloseMenu">Workshops</NavLink>
+            <NavLink class="nav-link" href="Über Uns" @onclick="CloseMenu">Über Uns</NavLink>
+            <NavLink class="nav-link" href="Nutzungsregeln" @onclick="CloseMenu">Nutzungsregeln</NavLink>
+            <NavLink class="nav-link" href="Kontakte" @onclick="CloseMenu">Kontakte</NavLink>
+        </div>
+    }
+</div>
+
+<style>
+    /* Burger-Button */
+    .burger-btn {
+        display: block;
+        background: linear-gradient(90deg, #093a9e 0%, #0b4ed1 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 0.8rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 101;
+    }
+
+    /* Dropdown-Menü */
+    .burger-dropdown {
+        background: linear-gradient(90deg, #093a9e 0%, #0b4ed1 100%);
+        position: absolute;
+        top: 70px; /* unter Topbar */
+        left: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem 0;
+        z-index: 50; /* unter LoginDropdown */
+    }
+
+        .burger-dropdown .nav-link {
+            color: white;
+            padding: 0.8rem 1rem;
+            text-decoration: none;
+        }
+
+            .burger-dropdown .nav-link:hover,
+            .burger-dropdown .nav-link.active {
+                background-color: rgba(255,255,255,0.15);
+            }
+
+    /* Nur Mobile */
+    @@media (max-width: 800px) {
+        .mobile-only
+
+    {
+        display: block;
+    }
+
+    }
+
+    @@media (min-width: 801px) {
+        .mobile-only
+
+    {
+        display: none;
+    }
+
+    }
+</style>
+
+@code {
+    private bool ShowMenu = false;
+
+    private void ToggleMenu() => ShowMenu = !ShowMenu;
+    private void CloseMenu() => ShowMenu = false;
+}

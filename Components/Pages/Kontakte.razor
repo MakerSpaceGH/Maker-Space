@@ -1,5 +1,110 @@
-﻿<h3>Kontakte</h3>
-@page "/Kontakte"
-@code {
+﻿@page "/Kontakte"
+@rendermode InteractiveServer
 
+<h3 class="page-title">Kontakte</h3>
+
+<div class="page-container">
+    <div class="contact-container">
+        @foreach (var person in ContactList)
+        {
+            <div class="contact-card">
+                <div class="contact-avatar">@person.Initials</div>
+                <h4>@person.Name</h4>
+                <p>Bei Problemen oder Fragen wenden Sie sich bitte an:</p>
+                <p class="role">@person.Role</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private class ContactModel
+    {
+        public string Name { get; set; } = "";
+        public string Role { get; set; } = "Kontaktperson";
+        public string Initials => string.Join("", Name.Split(' ').Select(n => n[0])).ToUpper();
+    }
+
+    private List<ContactModel> ContactList = new()
+    {
+        new ContactModel { Name = "Jonas Gohr" },
+        new ContactModel { Name = "Lui Teske" },
+        new ContactModel { Name = "Timo Prehn" },
+        new ContactModel { Name = "Colin Krummsee" },
+        new ContactModel { Name = "Tim Liebe" }
+    };
 }
+
+<style>
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #3ba9ff;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 2rem;
+        text-shadow: 0 0 15px rgba(59,169,255,0.7);
+    }
+
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem 4rem 1rem;
+    }
+
+    .contact-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .contact-card {
+        background: rgba(15,35,70,0.85);
+        border: 2px solid #3ba9ff;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(59,169,255,0.5);
+        }
+
+    .contact-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background-color: #3ba9ff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .contact-card h4 {
+        color: #3ba9ff;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-card p {
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        margin: 0.25rem 0;
+    }
+
+    .contact-card .role {
+        font-weight: 600;
+        color: #0d6efd;
+    }
+</style>

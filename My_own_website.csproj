@@ -1,24 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="NewFolder\**" />
+	  <Content Remove="NewFolder\**" />
+	  <EmbeddedResource Remove="NewFolder\**" />
+	  <None Remove="NewFolder\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <!-- Stylesheet -->
-    <Content Update="$(IntermediateOutputPath)My_own_website.styles.css">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+	<ItemGroup>
+		<Content Update="$(IntermediateOutputPath)My_own_website.styles.css">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-    <!-- Data-Ordner mit allen Dateien und Unterordnern -->
-    <Content Include="Data\**\*">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Data\NewFolder\" />
+	</ItemGroup>
 
 </Project>
