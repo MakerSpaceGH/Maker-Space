@@ -21,7 +21,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Data\NewFolder\" />
-	</ItemGroup>
+  <Content Include="Data\**\*">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
 
 </Project>
+
