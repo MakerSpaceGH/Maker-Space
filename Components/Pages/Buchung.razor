@@ -1,17 +1,19 @@
-@page "/buchung"
-@page "/buchung/{DatumParam}/{Uhrzeit}"
+﻿@page "/buchung"
+@page "/buchung/{DatumParam}/{UhrzeitParam}"
 @inject IWebHostEnvironment Env
 @inject GitHubUploader GitHubUploader
+@inject My_own_website.Services.TimeService TimeService
 @rendermode InteractiveServer
 
-<h3 style="color: #0d6efd;">Buchung Maker Space</h3>
+<!-- Überschrift und Uhr nebeneinander -->
+<div class="header-zeit-container">
+    <h3>Buchung Maker Space</h3>
+    <div class="zeit-anzeige">@zeitAnzeige</div>
+</div>
 
 <div class="form-group">
     <label>Datum (TT.MM.JJJJ):</label>
-    <input type="text" class="form-control"
-           @bind="Datum"
-           @bind:event="onchange"
-           placeholder="z.B. 12.07.2025" />
+    <input type="text" class="form-control" @bind="Datum" @bind:event="onchange" placeholder="z.B. 12.07.2025" />
 </div>
 
 <div class="form-group">
@@ -52,6 +54,20 @@
 }
 
 <style>
+    /* Container für Überschrift + Uhr */
+    .header-zeit-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #0d6efd;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
     .form-control {
         border: 2px solid #3b82f6;
         border-radius: 10px;
@@ -68,14 +84,21 @@
             border-color: #0d6efd;
             box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
         }
+
+    .zeit-anzeige {
+        background-color: #3b82f6;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
 </style>
 
 @code {
-    [Parameter]
-    public string DatumParam { get; set; } = "";
-
-    [Parameter]
-    public string Uhrzeit { get; set; } = "";
+    [Parameter] public string DatumParam { get; set; } = "";
+    [Parameter] public string UhrzeitParam { get; set; } = "";
 
     private string datum = "";
     public string Datum
@@ -88,6 +111,13 @@
         }
     }
 
+    private string _uhrzeit = "";
+    public string Uhrzeit
+    {
+        get => _uhrzeit;
+        set => _uhrzeit = value;
+    }
+
     private string Klasse = "";
     private string Schueler1 = "";
     private string Schueler2 = "";
@@ -95,15 +125,25 @@
     private string Klassencode = "";
 
     private string meldung = "";
-
     private Dictionary<string, string> klasseCodes = new();
 
     private string BuchungenPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
-    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassencodes.txt");
+    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassenCodes.txt");
 
-    protected override void OnInitialized()
+    private string zeitAnzeige = "";
+    private System.Timers.Timer zeitTimer;
+
+    protected override async Task OnInitializedAsync()
     {
         LadeKlasseCodes();
+
+        // Initiale Zeit
+        await UpdateZeit();
+
+        // Timer für jede Sekunde
+        zeitTimer = new System.Timers.Timer(1000);
+        zeitTimer.Elapsed += async (s, e) => await InvokeAsync(UpdateZeit);
+        zeitTimer.Start();
     }
 
     protected override void OnParametersSet()
@@ -111,8 +151,8 @@
         if (string.IsNullOrWhiteSpace(Datum) && !string.IsNullOrWhiteSpace(DatumParam))
             Datum = DatumParam;
 
-        if (string.IsNullOrWhiteSpace(Uhrzeit) && !string.IsNullOrWhiteSpace(Uhrzeit))
-            this.Uhrzeit = Uhrzeit;
+        if (string.IsNullOrWhiteSpace(Uhrzeit) && !string.IsNullOrWhiteSpace(UhrzeitParam))
+            Uhrzeit = UhrzeitParam;
     }
 
     private void LadeKlasseCodes()
@@ -142,9 +182,23 @@
 
     private void DatumFormatieren()
     {
-        if (DateTime.TryParseExact(datum, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var parsedDatum))
+        if (DateTime.TryParse(datum, out var parsedDatum))
         {
             datum = parsedDatum.ToString("dddd, dd. MMMM yyyy", new System.Globalization.CultureInfo("de-DE"));
+        }
+    }
+
+    private async Task UpdateZeit()
+    {
+        try
+        {
+            var now = await TimeService.GetNetworkTimeAsync();
+            zeitAnzeige = now.ToString("dddd, dd. MMMM yyyy HH:mm:ss", new System.Globalization.CultureInfo("de-DE"));
+            StateHasChanged();
+        }
+        catch
+        {
+            zeitAnzeige = DateTime.Now.ToString("dddd, dd. MMMM yyyy HH:mm:ss", new System.Globalization.CultureInfo("de-DE"));
         }
     }
 
@@ -172,22 +226,21 @@
             return;
         }
 
-        // Datum korrekt parsen
-        if (!DateTime.TryParseExact(Datum, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var parsedDatum))
+        if (!DateTime.TryParse(Datum, out var parsedDatum))
         {
             meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
             return;
         }
 
-        // Uhrzeit korrekt parsen
-        if (!TimeSpan.TryParseExact(Uhrzeit, "hh\\:mm", System.Globalization.CultureInfo.InvariantCulture, out var parsedUhrzeit))
+        if (!TimeSpan.TryParse(Uhrzeit, out var parsedUhrzeit))
         {
             meldung = "Die angegebene Uhrzeit konnte nicht verarbeitet werden.";
             return;
         }
 
+        var now = await TimeService.GetNetworkTimeAsync();
         var termin = parsedDatum.Date + parsedUhrzeit;
-        if (termin <= DateTime.Now)
+        if (termin <= now)
         {
             meldung = "Dieser Termin liegt in der Vergangenheit.";
             return;
@@ -216,8 +269,8 @@
             {
                 var parts = l.Split(';');
                 if (parts.Length >= 2 &&
-                    DateTime.TryParseExact(parts[0], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var existingDatum) &&
-                    TimeSpan.TryParseExact(parts[1], "hh\\:mm", System.Globalization.CultureInfo.InvariantCulture, out var existingUhrzeit))
+                    DateTime.TryParse(parts[0], out var existingDatum) &&
+                    TimeSpan.TryParse(parts[1], out var existingUhrzeit))
                 {
                     return existingDatum.Date == parsedDatum.Date &&
                            existingUhrzeit == parsedUhrzeit;
@@ -232,8 +285,7 @@
             foreach (var line in lines)
             {
                 var parts = line.Split(';');
-                if (parts.Length >= 4 &&
-                    DateTime.TryParseExact(parts[0], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var existingDatum))
+                if (parts.Length >= 4 && DateTime.TryParse(parts[0], out var existingDatum))
                 {
                     var gebuchteSchueler = parts[3].Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                     var schonGebucht = schuelerListe.FirstOrDefault(s => gebuchteSchueler.Contains(s));
@@ -268,7 +320,6 @@
                 var currentLines = File.ReadAllLines(BuchungenPath).ToList();
                 currentLines.RemoveAll(l => l == eintrag);
                 await File.WriteAllLinesAsync(BuchungenPath, currentLines);
-
                 meldung = "Buchung konnte nicht hochgeladen werden. Bitte später erneut versuchen.";
             }
         }

@@ -1,4 +1,4 @@
-@page "/LoggedIn"
+﻿@page "/LoggedIn"
 @using My_own_website.Services
 @using System.Globalization
 @inject LoginManager LoginService
@@ -81,20 +81,30 @@ else
                             {
                                 <span style="color:green; font-weight:bold;">@b.Status</span>
                             }
+                            else if (b.Status == "nicht gekommen")
+                            {
+                                <span style="color:red; font-weight:bold;">@b.Status</span>
+                            }
                             else
                             {
                                 <span style="color:#0D47A1;">Offen</span>
                             }
                         </td>
                         <td>
-                            @if (b.Status == "accept")
+                            bool istVergangenheit = CheckIfPast(b);
+
+                            if (b.Status == "accept")
                             {
-                                <em>Abgehakt</em>
+                            <em>Abgehakt</em>
+                            }
+                            else if (istVergangenheit)
+                            {
+                            <em>Vergangen</em>
                             }
                             else
                             {
-                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
+                            <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                            <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                         </td>
                         <td>@b.BearbeitetVon</td>
@@ -111,20 +121,30 @@ else
                             {
                                 <span style="color:green; font-weight:bold;">@b.Status</span>
                             }
+                            else if (b.Status == "nicht gekommen")
+                            {
+                                <span style="color:red; font-weight:bold;">@b.Status</span>
+                            }
                             else
                             {
                                 <span style="color:#0D47A1;">Offen</span>
                             }
                         </td>
                         <td>
-                            @if (b.Status == "accept")
+                            bool istVergangenheit = CheckIfPast(b);
+
+                            if (b.Status == "accept")
                             {
-                                <em>Abgehakt</em>
+                            <em>Abgehakt</em>
+                            }
+                            else if (istVergangenheit)
+                            {
+                            <em>Vergangen</em>
                             }
                             else
                             {
-                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
+                            <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                            <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                         </td>
                         <td>@b.BearbeitetVon</td>
@@ -164,10 +184,13 @@ else
             return;
         }
 
-        // Netzwerkzeit einmal holen
-        networkTime = await TimeService.GetNetworkTimeAsync();
+        // Netzwerkzeit holen und in Berliner Zeit umrechnen
+        var networkTimeUtc = await TimeService.GetNetworkTimeAsync();
+        TimeZoneInfo berlin = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+        networkTime = TimeZoneInfo.ConvertTimeFromUtc(networkTimeUtc, berlin);
 
         LoadBuchungen();
+        UpdatePastBookings();
         FilterBuchungen();
         Navigation.LocationChanged += (_, __) => Logout();
     }
@@ -188,6 +211,7 @@ else
     {
         SelectedKategorie = e.Value?.ToString() ?? "raum";
         LoadBuchungen();
+        UpdatePastBookings();
         FilterBuchungen();
     }
 
@@ -246,6 +270,32 @@ else
                     });
             }
         }
+    }
+
+    void UpdatePastBookings()
+    {
+        foreach (var b in buchungen)
+        {
+            if (b.Status == "offen" && CheckIfPast(b))
+            {
+                b.Status = "nicht gekommen";
+            }
+        }
+        SaveBuchungen();
+    }
+
+    bool CheckIfPast(Buchung b)
+    {
+        if (!DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var datum))
+            return false;
+        if (!TimeSpan.TryParseExact(b.Uhrzeit, @"hh\:mm", CultureInfo.InvariantCulture, out var zeit))
+        {
+            if (!TimeSpan.TryParseExact(b.Uhrzeit, @"HH\:mm", CultureInfo.InvariantCulture, out zeit))
+                return false;
+        }
+
+        DateTime bookingTime = datum.Add(zeit);
+        return networkTime >= bookingTime;
     }
 
     void FilterBuchungen()

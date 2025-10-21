@@ -18,22 +18,25 @@ namespace My_own_website.Services
         {
             try
             {
-                // Weltzeit API
-                var response = await _http.GetStringAsync("http://worldtimeapi.org/api/timezone/Europe/Berlin");
+                var response = await _http.GetStringAsync("https://worldtimeapi.org/api/timezone/Europe/Berlin");
                 using var doc = JsonDocument.Parse(response);
-                var datetime = doc.RootElement.GetProperty("datetime").GetString();
-                if (DateTime.TryParse(datetime, out var netTime))
+
+                var datetimeStr = doc.RootElement.GetProperty("datetime").GetString();
+                if (DateTimeOffset.TryParse(datetimeStr, out var netTime))
                 {
-                    return netTime;
+                    TimeZoneInfo berlin = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+                    return TimeZoneInfo.ConvertTime(netTime.UtcDateTime, berlin);
                 }
             }
             catch
             {
-                // Falls API fehlschlägt, fallback auf Serverzeit
-                return DateTime.Now;
+              
+                TimeZoneInfo berlin = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+                return TimeZoneInfo.ConvertTime(DateTime.UtcNow, berlin);
             }
 
-            return DateTime.Now;
+            TimeZoneInfo fallback = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+            return TimeZoneInfo.ConvertTime(DateTime.UtcNow, fallback);
         }
     }
 }

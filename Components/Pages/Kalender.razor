@@ -1,4 +1,4 @@
-@page "/kalender"
+﻿@page "/kalender"
 @rendermode InteractiveServer
 
 @using System.Globalization
@@ -182,12 +182,12 @@
                         b.Uhrzeit < end.TimeOfDay);
 
                     day.TimeSlots.Add(new TimeSlot
-                    {
-                        Start = start,
-                        End = end,
-                        IsFree = !slotInVergangenheit && !slotBelegt,
-                        Typ = slotInfo.Typ
-                    });
+                        {
+                            Start = start,
+                            End = end,
+                            IsFree = !slotInVergangenheit && !slotBelegt,
+                            Typ = slotInfo.Typ
+                        });
                 }
 
                 calendarDays.Add(day);
@@ -223,13 +223,13 @@
             }
 
             liste.Add(new Buchung
-            {
-                Datum = datum,
-                Uhrzeit = zeit,
-                Klasse = parts[2],
-                Schueler = parts[3],
-                Klassencode = parts[4]
-            });
+                {
+                    Datum = datum,
+                    Uhrzeit = zeit,
+                    Klasse = parts[2],
+                    Schueler = parts[3],
+                    Klassencode = parts[4]
+                });
         }
 
         return liste;
