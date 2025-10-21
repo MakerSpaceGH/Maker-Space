@@ -1,4 +1,4 @@
-﻿@page "/buchung"
+@page "/buchung"
 @page "/buchung/{DatumParam}/{UhrzeitParam}"
 @inject IWebHostEnvironment Env
 @inject GitHubUploader GitHubUploader
@@ -54,7 +54,6 @@
 }
 
 <style>
-    /* Container für Überschrift + Uhr */
     .header-zeit-container {
         display: flex;
         justify-content: space-between;
@@ -79,11 +78,11 @@
         box-sizing: border-box;
     }
 
-        .form-control:focus {
-            outline: none;
-            border-color: #0d6efd;
-            box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
-        }
+    .form-control:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+    }
 
     .zeit-anzeige {
         background-color: #3b82f6;
@@ -135,6 +134,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Culture explizit auf Deutsch setzen, damit TryParse überall funktioniert
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = new System.Globalization.CultureInfo("de-DE");
+        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = new System.Globalization.CultureInfo("de-DE");
+
         LadeKlasseCodes();
 
         // Initiale Zeit
@@ -148,6 +151,7 @@
 
     protected override void OnParametersSet()
     {
+        // Parameter aus URL nutzen, falls Eingabe leer
         if (string.IsNullOrWhiteSpace(Datum) && !string.IsNullOrWhiteSpace(DatumParam))
             Datum = DatumParam;
 
@@ -182,7 +186,7 @@
 
     private void DatumFormatieren()
     {
-        if (DateTime.TryParse(datum, out var parsedDatum))
+        if (DateTime.TryParse(datum, new System.Globalization.CultureInfo("de-DE"), System.Globalization.DateTimeStyles.None, out var parsedDatum))
         {
             datum = parsedDatum.ToString("dddd, dd. MMMM yyyy", new System.Globalization.CultureInfo("de-DE"));
         }
@@ -226,13 +230,13 @@
             return;
         }
 
-        if (!DateTime.TryParse(Datum, out var parsedDatum))
+        if (!DateTime.TryParse(Datum, new System.Globalization.CultureInfo("de-DE"), System.Globalization.DateTimeStyles.None, out var parsedDatum))
         {
             meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
             return;
         }
 
-        if (!TimeSpan.TryParse(Uhrzeit, out var parsedUhrzeit))
+        if (!TimeSpan.TryParse(Uhrzeit, System.Globalization.CultureInfo.InvariantCulture, out var parsedUhrzeit))
         {
             meldung = "Die angegebene Uhrzeit konnte nicht verarbeitet werden.";
             return;
@@ -269,8 +273,8 @@
             {
                 var parts = l.Split(';');
                 if (parts.Length >= 2 &&
-                    DateTime.TryParse(parts[0], out var existingDatum) &&
-                    TimeSpan.TryParse(parts[1], out var existingUhrzeit))
+                    DateTime.TryParse(parts[0], new System.Globalization.CultureInfo("de-DE"), System.Globalization.DateTimeStyles.None, out var existingDatum) &&
+                    TimeSpan.TryParse(parts[1], System.Globalization.CultureInfo.InvariantCulture, out var existingUhrzeit))
                 {
                     return existingDatum.Date == parsedDatum.Date &&
                            existingUhrzeit == parsedUhrzeit;
@@ -285,7 +289,7 @@
             foreach (var line in lines)
             {
                 var parts = line.Split(';');
-                if (parts.Length >= 4 && DateTime.TryParse(parts[0], out var existingDatum))
+                if (parts.Length >= 4 && DateTime.TryParse(parts[0], new System.Globalization.CultureInfo("de-DE"), System.Globalization.DateTimeStyles.None, out var existingDatum))
                 {
                     var gebuchteSchueler = parts[3].Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                     var schonGebucht = schuelerListe.FirstOrDefault(s => gebuchteSchueler.Contains(s));
@@ -329,4 +333,3 @@
         }
     }
 }
-
