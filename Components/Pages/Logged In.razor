@@ -101,12 +101,10 @@ else
                             }
                             else if (istVergangenheit)
                             {
-                                <!-- Vergangene Buchung: nur "Nicht gekommen" Button -->
                                 <button class="btn btn-danger btn-sm" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                             else
                             {
-                                <!-- Normale Buchung: beide Buttons -->
                                 <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
                                 <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
@@ -239,15 +237,15 @@ else
                 if (parts.Length < 5) continue;
                 string status = parts.Length > 5 && !string.IsNullOrWhiteSpace(parts[5]) ? parts[5].Trim() : "offen";
                 buchungen.Add(new Buchung
-                    {
-                        Datum = parts[0].Trim(),
-                        Uhrzeit = parts[1].Trim(),
-                        Klasse = parts[2].Trim(),
-                        Schueler = parts[3].Trim(),
-                        Code = parts[4].Trim(),
-                        Status = status,
-                        BearbeitetVon = parts.Length > 6 ? parts[6].Trim() : ""
-                    });
+                {
+                    Datum = parts[0].Trim(),
+                    Uhrzeit = parts[1].Trim(),
+                    Klasse = parts[2].Trim(),
+                    Schueler = parts[3].Trim(),
+                    Code = parts[4].Trim(),
+                    Status = status,
+                    BearbeitetVon = parts.Length > 6 ? parts[6].Trim() : ""
+                });
             }
             else
             {
@@ -263,15 +261,15 @@ else
                 string status = parts.Length > 4 && !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "offen";
                 string bearbeitetVon = parts.Length > 5 ? parts[5].Trim() : "";
                 buchungen.Add(new Buchung
-                    {
-                        Schueler = parts[0].Trim(),
-                        Klasse = parts[1].Trim(),
-                        Code = parts[2].Trim(),
-                        Datum = datum,
-                        Uhrzeit = uhrzeit,
-                        Status = status,
-                        BearbeitetVon = bearbeitetVon
-                    });
+                {
+                    Schueler = parts[0].Trim(),
+                    Klasse = parts[1].Trim(),
+                    Code = parts[2].Trim(),
+                    Datum = datum,
+                    Uhrzeit = uhrzeit,
+                    Status = status,
+                    BearbeitetVon = bearbeitetVon
+                });
             }
         }
     }
@@ -318,10 +316,14 @@ else
 
     async Task MarkAcceptAsync(Buchung b)
     {
+        // Status und Bearbeiter eintragen
         b.Status = "accept";
         b.BearbeitetVon = LoginService.CurrentUsername;
+
+        // Speichern + GitHub Upload
         SaveBuchungen();
         await BackupAndGitHubUpload();
+
         FilterBuchungen();
         StateHasChanged();
     }
@@ -347,7 +349,8 @@ else
             if (GitHubUploader != null)
             {
                 string relativePath = Path.GetRelativePath(Env.ContentRootPath, path).Replace("\\", "/");
-                await GitHubUploader.UploadOrUpdateFileAsync(relativePath, File.ReadAllText(path), $"Datei aktualisiert von {LoginService.CurrentUsername}");
+                string commitMsg = $"Buchung aktualisiert von {LoginService.CurrentUsername}";
+                await GitHubUploader.UploadOrUpdateFileAsync(relativePath, File.ReadAllText(path), commitMsg);
             }
         }
     }
