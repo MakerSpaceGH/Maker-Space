@@ -1,4 +1,4 @@
-﻿@page "/LoggedIn"
+@page "/LoggedIn"
 @using My_own_website.Services
 @using System.Globalization
 @inject LoginManager LoginService
@@ -7,6 +7,7 @@
 @inject BackupService BackupService
 @inject GitHubUploader GitHubUploader
 @inject IJSRuntime JS
+@inject TimeService TimeService
 @rendermode InteractiveServer
 
 <h3 style="color:#1E3A8A; margin-bottom: 0.5rem;">Buchungen Übersicht</h3>
@@ -76,52 +77,24 @@ else
                         <td>@b.Schueler</td>
                         <td>@b.Code</td>
                         <td>
-                            @{
-                                bool istVergangenheit = false;
-                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum) &&
-                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit))
-                                {
-                                    var termin = parsedDatum.Date + parsedUhrzeit;
-                                    istVergangenheit = termin <= DateTime.Now;
-                                }
-
-                                if (istVergangenheit && b.Status != "accept")
-                                {
-                                    b.Status = "nicht gekommen";
-                                }
-
-                                if (b.Status == "accept")
-                                {
-                                    <span style="color:green; font-weight:bold;">@b.Status</span>
-                                }
-                                else if (b.Status == "nicht gekommen")
-                                {
-                                    <span style="color:red; font-weight:bold;">@b.Status</span>
-                                }
-                                else
-                                {
-                                    <span style="color:#0D47A1;">Offen</span>
-                                }
-                            }
-                        </td>
-                        <td>
-                            @if (b.Status != "accept")
+                            @if (b.Status == "accept")
                             {
-                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum2) &&
-                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit2) &&
-                                (parsedDatum2.Date + parsedUhrzeit2) <= DateTime.Now)
-                                {
-                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeletePastBookingAsync(b)">Nicht gekommen</button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
-                                }
+                                <span style="color:green; font-weight:bold;">@b.Status</span>
                             }
                             else
                             {
+                                <span style="color:#0D47A1;">Offen</span>
+                            }
+                        </td>
+                        <td>
+                            @if (b.Status == "accept")
+                            {
                                 <em>Abgehakt</em>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                         </td>
                         <td>@b.BearbeitetVon</td>
@@ -134,52 +107,24 @@ else
                         <td>@b.Datum</td>
                         <td>@b.Uhrzeit</td>
                         <td>
-                            @{
-                                bool istVergangenheit = false;
-                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum) &&
-                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit))
-                                {
-                                    var termin = parsedDatum.Date + parsedUhrzeit;
-                                    istVergangenheit = termin <= DateTime.Now;
-                                }
-
-                                if (istVergangenheit && b.Status != "accept")
-                                {
-                                    b.Status = "nicht gekommen";
-                                }
-
-                                if (b.Status == "accept")
-                                {
-                                    <span style="color:green; font-weight:bold;">@b.Status</span>
-                                }
-                                else if (b.Status == "nicht gekommen")
-                                {
-                                    <span style="color:red; font-weight:bold;">@b.Status</span>
-                                }
-                                else
-                                {
-                                    <span style="color:#0D47A1;">Offen</span>
-                                }
-                            }
-                        </td>
-                        <td>
-                            @if (b.Status != "accept")
+                            @if (b.Status == "accept")
                             {
-                                if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum2) &&
-                                TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit2) &&
-                                (parsedDatum2.Date + parsedUhrzeit2) <= DateTime.Now)
-                                {
-                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeletePastBookingAsync(b)">Nicht gekommen</button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                                    <button class="btn btn-danger btn-sm ms-2" @onclick="() => MarkNotComeAsync(b)">Nicht gekommen</button>
-                                }
+                                <span style="color:green; font-weight:bold;">@b.Status</span>
                             }
                             else
                             {
+                                <span style="color:#0D47A1;">Offen</span>
+                            }
+                        </td>
+                        <td>
+                            @if (b.Status == "accept")
+                            {
                                 <em>Abgehakt</em>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                         </td>
                         <td>@b.BearbeitetVon</td>
@@ -209,6 +154,7 @@ else
     string RaumPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
     string WorkshopPath => Path.Combine(Env.ContentRootPath, "Data", "workshops.txt");
     private bool jsInitialized = false;
+    private DateTime networkTime;
 
     protected override async Task OnInitializedAsync()
     {
@@ -217,6 +163,9 @@ else
             Navigation.NavigateTo("/");
             return;
         }
+
+        // Netzwerkzeit einmal holen
+        networkTime = await TimeService.GetNetworkTimeAsync();
 
         LoadBuchungen();
         FilterBuchungen();
@@ -233,10 +182,7 @@ else
     }
 
     [JSInvokable]
-    public void LogoutJS()
-    {
-        Logout();
-    }
+    public void LogoutJS() => Logout();
 
     void OnKategorieChanged(ChangeEventArgs e)
     {
@@ -300,20 +246,17 @@ else
                     });
             }
         }
-
-        FilterBuchungen();
     }
 
     void FilterBuchungen()
     {
-        if (string.IsNullOrWhiteSpace(SearchTerm))
-            filteredBuchungen = buchungen;
-        else
-            filteredBuchungen = buchungen
-                .Where(b => b.Schueler.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)
-                         || b.Klasse.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)
-                         || b.Code.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+        filteredBuchungen = string.IsNullOrWhiteSpace(SearchTerm)
+            ? buchungen
+            : buchungen.Where(b =>
+                b.Schueler.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                b.Klasse.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                b.Code.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
+            .ToList();
     }
 
     void SaveBuchungen()
@@ -337,36 +280,7 @@ else
         StateHasChanged();
     }
 
-    async Task MarkNotComeAsync(Buchung b)
-    {
-        // Prüfen, ob Termin in der Vergangenheit liegt
-        bool istVergangenheit = false;
-        if (DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDatum) &&
-            TimeSpan.TryParse(b.Uhrzeit, out var parsedUhrzeit))
-        {
-            var termin = parsedDatum.Date + parsedUhrzeit;
-            istVergangenheit = termin <= DateTime.Now;
-        }
-
-        if (!istVergangenheit)
-        {
-            // Normale Buchung → entfernen
-            buchungen.Remove(b);
-        }
-        else
-        {
-            // Vergangene Termine → Status auf "nicht gekommen"
-            b.Status = "nicht gekommen";
-            b.BearbeitetVon = LoginService.CurrentUsername;
-        }
-
-        SaveBuchungen();
-        await BackupAndGitHubUpload();
-        FilterBuchungen();
-        StateHasChanged();
-    }
-
-    async Task DeletePastBookingAsync(Buchung b)
+    async Task DeleteBookingAsync(Buchung b)
     {
         buchungen.Remove(b);
         SaveBuchungen();
@@ -377,16 +291,23 @@ else
 
     async Task BackupAndGitHubUpload()
     {
-        string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
-        await BackupService.BackupFileAsync(path, path);
+        string[] paths = { RaumPath, WorkshopPath };
 
-        if (GitHubUploader != null)
+        foreach (var path in paths)
         {
-            await GitHubUploader.UploadOrUpdateFileAsync(
-                path.Replace(Env.ContentRootPath + Path.DirectorySeparatorChar, ""),
-                File.ReadAllText(path),
-                $"{SelectedKategorie} Buchungen aktualisiert von {LoginService.CurrentUsername}"
-            );
+            if (!File.Exists(path)) continue;
+
+            await BackupService.BackupFileAsync(path, path);
+
+            if (GitHubUploader != null)
+            {
+                string relativePath = Path.GetRelativePath(Env.ContentRootPath, path).Replace("\\", "/");
+                await GitHubUploader.UploadOrUpdateFileAsync(
+                    relativePath,
+                    File.ReadAllText(path),
+                    $"Datei aktualisiert von {LoginService.CurrentUsername}"
+                );
+            }
         }
     }
 
@@ -404,7 +325,7 @@ else
         if (LoginService.IsLoggedIn)
         {
             LoginService.Logout();
-            Navigation.NavigateTo("/", true); // forceLoad = true → Seite komplett neu laden
+            Navigation.NavigateTo("/", true);
         }
     }
 }
