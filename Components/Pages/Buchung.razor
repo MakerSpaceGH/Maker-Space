@@ -108,7 +108,6 @@
 
     protected override void OnParametersSet()
     {
-        // Nur übernehmen, wenn Datum bzw. Uhrzeit noch leer sind
         if (string.IsNullOrWhiteSpace(Datum) && !string.IsNullOrWhiteSpace(DatumParam))
             Datum = DatumParam;
 
@@ -143,7 +142,7 @@
 
     private void DatumFormatieren()
     {
-        if (DateTime.TryParse(datum, out var parsedDatum))
+        if (DateTime.TryParseExact(datum, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var parsedDatum))
         {
             datum = parsedDatum.ToString("dddd, dd. MMMM yyyy", new System.Globalization.CultureInfo("de-DE"));
         }
@@ -153,7 +152,6 @@
     {
         meldung = "";
 
-        // Pflichtfelder prüfen
         var fehlendeFelder = new List<string>();
         if (string.IsNullOrWhiteSpace(Datum)) fehlendeFelder.Add("Datum");
         if (string.IsNullOrWhiteSpace(Uhrzeit)) fehlendeFelder.Add("Uhrzeit");
@@ -167,7 +165,6 @@
             return;
         }
 
-        // Prüfung auf gleiche Namen bei Schüler 1-3
         var schuelerListe = new[] { Schueler1, Schueler2, Schueler3 }.Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
         if (schuelerListe.Length != schuelerListe.Distinct().Count())
         {
@@ -175,19 +172,20 @@
             return;
         }
 
-        if (!DateTime.TryParse(Datum, out var parsedDatum))
+        // Datum korrekt parsen
+        if (!DateTime.TryParseExact(Datum, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var parsedDatum))
         {
             meldung = "Das angegebene Datum konnte nicht verarbeitet werden.";
             return;
         }
 
-        if (!TimeSpan.TryParse(Uhrzeit, out var parsedUhrzeit))
+        // Uhrzeit korrekt parsen
+        if (!TimeSpan.TryParseExact(Uhrzeit, "hh\\:mm", System.Globalization.CultureInfo.InvariantCulture, out var parsedUhrzeit))
         {
             meldung = "Die angegebene Uhrzeit konnte nicht verarbeitet werden.";
             return;
         }
 
-        // **Hier prüfen, ob Termin in der Zukunft liegt**
         var termin = parsedDatum.Date + parsedUhrzeit;
         if (termin <= DateTime.Now)
         {
@@ -214,13 +212,12 @@
 
             var lines = File.Exists(BuchungenPath) ? File.ReadAllLines(BuchungenPath) : Array.Empty<string>();
 
-            // Termin prüfen
             if (lines.Any(l =>
             {
                 var parts = l.Split(';');
                 if (parts.Length >= 2 &&
-                    DateTime.TryParse(parts[0], out var existingDatum) &&
-                    TimeSpan.TryParse(parts[1], out var existingUhrzeit))
+                    DateTime.TryParseExact(parts[0], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var existingDatum) &&
+                    TimeSpan.TryParseExact(parts[1], "hh\\:mm", System.Globalization.CultureInfo.InvariantCulture, out var existingUhrzeit))
                 {
                     return existingDatum.Date == parsedDatum.Date &&
                            existingUhrzeit == parsedUhrzeit;
@@ -232,11 +229,11 @@
                 return;
             }
 
-            // Schüler prüfen
             foreach (var line in lines)
             {
                 var parts = line.Split(';');
-                if (parts.Length >= 4 && DateTime.TryParse(parts[0], out var existingDatum))
+                if (parts.Length >= 4 &&
+                    DateTime.TryParseExact(parts[0], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var existingDatum))
                 {
                     var gebuchteSchueler = parts[3].Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                     var schonGebucht = schuelerListe.FirstOrDefault(s => gebuchteSchueler.Contains(s));
@@ -248,11 +245,9 @@
                 }
             }
 
-            // Buchung vorbereiten mit ISO-Datum
             var eintrag = $"{parsedDatum:yyyy-MM-dd};{parsedUhrzeit:hh\\:mm};{Klasse};{Schueler1}, {Schueler2}, {Schueler3};{Klassencode}";
             await File.AppendAllTextAsync(BuchungenPath, eintrag + Environment.NewLine);
 
-            // GitHub Upload
             bool success = await GitHubUploader.UploadOrUpdateFileAsync(
                 path: "Data/buchungen.txt",
                 content: File.ReadAllText(BuchungenPath),
@@ -262,7 +257,6 @@
             if (success)
             {
                 meldung = "Buchung erfolgreich gespeichert und hochgeladen!";
-                // Formular zurücksetzen
                 Klasse = "";
                 Schueler1 = "";
                 Schueler2 = "";
@@ -271,7 +265,6 @@
             }
             else
             {
-                // Eintrag aus Datei entfernen
                 var currentLines = File.ReadAllLines(BuchungenPath).ToList();
                 currentLines.RemoveAll(l => l == eintrag);
                 await File.WriteAllLinesAsync(BuchungenPath, currentLines);
@@ -285,4 +278,3 @@
         }
     }
 }
-
