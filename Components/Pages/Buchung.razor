@@ -1,4 +1,4 @@
-﻿@page "/buchung"
+@page "/buchung"
 @page "/buchung/{DatumParam}/{Uhrzeit}"
 @inject IWebHostEnvironment Env
 @inject GitHubUploader GitHubUploader
@@ -99,7 +99,7 @@
     private Dictionary<string, string> klasseCodes = new();
 
     private string BuchungenPath => Path.Combine(Env.ContentRootPath, "Data", "buchungen.txt");
-    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassencodes.txt");
+    private string KlasseCodesPath => Path.Combine(Env.ContentRootPath, "Data", "klassenCodes.txt");
 
     protected override void OnInitialized()
     {
@@ -285,4 +285,3 @@
         }
     }
 }
-
