@@ -1,4 +1,4 @@
-﻿@page "/LoggedIn"
+@page "/LoggedIn"
 @using My_own_website.Services
 @using System.Globalization
 @inject LoginManager LoginService
@@ -91,20 +91,24 @@ else
                             }
                         </td>
                         <td>
-                            bool istVergangenheit = CheckIfPast(b);
+                            @{
+                                bool istVergangenheit = CheckIfPast(b);
+                            }
 
-                            if (b.Status == "accept")
+                            @if (b.Status == "accept")
                             {
-                            <em>Abgehakt</em>
+                                <em>Abgehakt</em>
                             }
                             else if (istVergangenheit)
                             {
-                            <em>Vergangen</em>
+                                <!-- Vergangene Buchung: nur "Nicht gekommen" Button -->
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                             else
                             {
-                            <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                            <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
+                                <!-- Normale Buchung: beide Buttons -->
+                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                         </td>
                         <td>@b.BearbeitetVon</td>
@@ -131,20 +135,22 @@ else
                             }
                         </td>
                         <td>
-                            bool istVergangenheit = CheckIfPast(b);
+                            @{
+                                bool istVergangenheit = CheckIfPast(b);
+                            }
 
-                            if (b.Status == "accept")
+                            @if (b.Status == "accept")
                             {
-                            <em>Abgehakt</em>
+                                <em>Abgehakt</em>
                             }
                             else if (istVergangenheit)
                             {
-                            <em>Vergangen</em>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                             else
                             {
-                            <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
-                            <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
+                                <button class="btn btn-primary btn-sm" @onclick="() => MarkAcceptAsync(b)">Kommen</button>
+                                <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteBookingAsync(b)">Nicht gekommen</button>
                             }
                         </td>
                         <td>@b.BearbeitetVon</td>
@@ -184,7 +190,6 @@ else
             return;
         }
 
-        // Netzwerkzeit holen und in Berliner Zeit umrechnen
         var networkTimeUtc = await TimeService.GetNetworkTimeAsync();
         TimeZoneInfo berlin = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
         networkTime = TimeZoneInfo.ConvertTimeFromUtc(networkTimeUtc, berlin);
@@ -200,7 +205,8 @@ else
         if (firstRender && !jsInitialized)
         {
             jsInitialized = true;
-            await JS.InvokeVoidAsync("window.addEventListener", "beforeunload", DotNetObjectReference.Create(this), "LogoutJS");
+            var dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("window.addEventListener", "beforeunload", dotNetRef, "LogoutJS");
         }
     }
 
@@ -217,13 +223,13 @@ else
 
     void LoadBuchungen()
     {
-        buchungen = new List<Buchung>();
+        buchungen.Clear();
         string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
         if (!File.Exists(path)) return;
 
-        var lines = File.ReadAllLines(path);
+        var lines = File.ReadAllLines(path).Reverse();
 
-        foreach (var line in lines.Reverse())
+        foreach (var line in lines)
         {
             if (string.IsNullOrWhiteSpace(line)) continue;
             var parts = line.Split(';');
@@ -254,10 +260,8 @@ else
                     datum = dtParts.Length > 0 ? dtParts[0] : "";
                     uhrzeit = dtParts.Length > 1 ? dtParts[1] : "00:00";
                 }
-
-                string status = !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "offen";
+                string status = parts.Length > 4 && !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "offen";
                 string bearbeitetVon = parts.Length > 5 ? parts[5].Trim() : "";
-
                 buchungen.Add(new Buchung
                     {
                         Schueler = parts[0].Trim(),
@@ -277,9 +281,7 @@ else
         foreach (var b in buchungen)
         {
             if (b.Status == "offen" && CheckIfPast(b))
-            {
                 b.Status = "nicht gekommen";
-            }
         }
         SaveBuchungen();
     }
@@ -289,13 +291,10 @@ else
         if (!DateTime.TryParseExact(b.Datum, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var datum))
             return false;
         if (!TimeSpan.TryParseExact(b.Uhrzeit, @"hh\:mm", CultureInfo.InvariantCulture, out var zeit))
-        {
             if (!TimeSpan.TryParseExact(b.Uhrzeit, @"HH\:mm", CultureInfo.InvariantCulture, out zeit))
                 return false;
-        }
 
-        DateTime bookingTime = datum.Add(zeit);
-        return networkTime >= bookingTime;
+        return networkTime >= datum.Add(zeit);
     }
 
     void FilterBuchungen()
@@ -305,18 +304,15 @@ else
             : buchungen.Where(b =>
                 b.Schueler.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
                 b.Klasse.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                b.Code.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
-            .ToList();
+                b.Code.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
     void SaveBuchungen()
     {
         string path = SelectedKategorie == "raum" ? RaumPath : WorkshopPath;
-
         var lines = SelectedKategorie == "raum"
             ? buchungen.Select(b => $"{b.Datum};{b.Uhrzeit};{b.Klasse};{b.Schueler};{b.Code};{b.Status};{b.BearbeitetVon}")
             : buchungen.Select(b => $"{b.Schueler};{b.Klasse};{b.Code};{b.Datum} {b.Uhrzeit};{b.Status};{b.BearbeitetVon}");
-
         File.WriteAllLines(path, lines.Reverse());
     }
 
@@ -342,7 +338,6 @@ else
     async Task BackupAndGitHubUpload()
     {
         string[] paths = { RaumPath, WorkshopPath };
-
         foreach (var path in paths)
         {
             if (!File.Exists(path)) continue;
@@ -352,11 +347,7 @@ else
             if (GitHubUploader != null)
             {
                 string relativePath = Path.GetRelativePath(Env.ContentRootPath, path).Replace("\\", "/");
-                await GitHubUploader.UploadOrUpdateFileAsync(
-                    relativePath,
-                    File.ReadAllText(path),
-                    $"Datei aktualisiert von {LoginService.CurrentUsername}"
-                );
+                await GitHubUploader.UploadOrUpdateFileAsync(relativePath, File.ReadAllText(path), $"Datei aktualisiert von {LoginService.CurrentUsername}");
             }
         }
     }
@@ -364,10 +355,7 @@ else
     void OnEnterSearch(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
-        {
             FilterBuchungen();
-            StateHasChanged();
-        }
     }
 
     void Logout()
