@@ -1,9 +1,0 @@
-{
-  "GitHub": {
-    "Owner": "MakerSpaceGH",
-    "Repo": "Maker-Space",
-    "Token": "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"
-  }
-
-}
-
