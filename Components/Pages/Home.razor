@@ -1,8 +1,9 @@
-﻿@page "/"
+@page "/"
 
 <PageTitle>Home</PageTitle>
 
 <style>
+    /* ==== Container Styles ==== */
     .welcome-container {
         max-width: 700px;
         margin: 2rem auto;
@@ -16,7 +17,7 @@
             display: block;
             max-width: 100%;
             height: auto;
-            margin: 0 auto 1.5rem;
+            margin: 0 auto 1rem;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
@@ -24,7 +25,7 @@
     h1 {
         font-weight: 700;
         font-size: 2.5rem;
-        color: #0d6efd; /* Blau, Bootstrap primary */
+        color: #0d6efd;
         margin-bottom: 1rem;
     }
 
@@ -51,14 +52,43 @@
             box-shadow: 0 6px 12px rgba(8, 66, 152, 0.5);
             outline: none;
         }
+
+    /* ==== Info Banner direkt unter Bild ==== */
+    .info-banner {
+        margin: 1rem auto 2rem auto;
+        max-width: 700px;
+        background: linear-gradient(90deg, #0d6efd, #084298);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 600;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        overflow: hidden;
+        position: relative;
+    }
+
+        .info-banner span {
+            display: inline-block;
+            opacity: 1;
+            transition: opacity 0.5s, transform 0.5s;
+        }
 </style>
 
 <div class="welcome-container">
-    <!-- Hier kommt das Bild rein -->
-    <img src="images/maker-space.jpg" alt="Maker Space" style="max-width:100%;height:auto;" />
+    <!-- Bild -->
+    <img src="images/maker-space.jpg" alt="Maker Space" />
 
+    <!-- Info Banner -->
+    <div class="info-banner">
+        <span id="info-text">Willkommen im Maker Space!</span>
+    </div>
+
+    <!-- Überschrift -->
     <h1>Hallo und herzlich willkommen!</h1>
 
+    <!-- Text -->
     <p>
         Moin! Schön, dass du da bist. Wir sind der <strong>Maker Space</strong> der Gemeinschaftsschule Harksheide — ein Ort voller Ideen, Technik und Kreativität. Hier kannst du basteln, programmieren, tüfteln und alles ausprobieren, worauf du Lust hast.
     </p>
@@ -75,3 +105,30 @@
         sichere dir einen freien Termin und werde Teil unserer kreativen Community. Wir freuen uns auf dich!
     </p>
 </div>
+
+<script>
+    const messages = [
+        "Willkommen im Maker Space!",
+        "Die Eröffnung findet am 6.11.2025 um 10 Uhr statt.",
+        "Schau doch mal beim Buchungskalender vorbei.",
+    ];
+
+    let current = 0;
+    const infoText = document.getElementById("info-text");
+
+    setInterval(() => {
+        // Fade out
+        infoText.style.opacity = 0;
+        infoText.style.transform = "translateY(-5px)";
+
+        setTimeout(() => {
+            // Text wechseln
+            current = (current + 1) % messages.length;
+            infoText.textContent = messages[current];
+
+            // Fade in
+            infoText.style.opacity = 1;
+            infoText.style.transform = "translateY(0)";
+        }, 500); // Dauer der Fade-Out Phase
+    }, 4000); // wechselt alle 4 Sekunden
+</script>
