@@ -8,4 +8,4 @@
 2025-10-22;08:00;9c;Jonas, ,;Code123;accept;Admin
 2025-10-22;09:30;9c;Otto, ,;Code123;accept;Admin
 2025-10-22;09:50;9c;Friedrich Merz, ,;Code123;accept;Admin
-2025-10-22;10:50;9c;Nils, , ;Code123;;
+2025-10-24;08:00;9c;Jonas, , ;Code123
