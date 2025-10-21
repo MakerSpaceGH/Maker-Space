@@ -8,4 +8,4 @@ Thomas;9c;Davinci;30.10.2025 14:00;accept;Admin
 Jonas;9c;3DPrinter;25.10.2025 10:00;accept;Admin
 Jonas;9c;Davinci;26.10.2025 15:33;accept;Admin
 Merz;9c;Davinci;26.10.2025 15:33;accept;Admin
-Jonas;9c;Podcast;06.11.2025 10:00;;
+Jonas;9c;Podcast;06.11.2025 10:00;accept;Jonas
